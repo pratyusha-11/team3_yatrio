@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  .board{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);}
+
+  /* hero swatch */
+  .p1{padding:64px 36px 30px;display:flex;flex-direction:column;}
+  .p1 .big{flex:1;border-radius:12px;background:linear-gradient(135deg,#04275B 0%,#014CA9 55%,#0080F8 100%);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:26px;}
+  .p1 .big::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 10%,rgba(59,179,253,.4),transparent 55%);}
+  .p1 .nm{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.01em;position:relative;}
+  .p1 .hex{font-size:13px;color:rgba(255,255,255,.75);letter-spacing:.14em;margin-top:4px;position:relative;}
+  .p1 .role{position:absolute;top:22px;left:26px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.65);}
+  .p1 .bars{display:flex;gap:12px;margin-top:14px;}
+  .p1 .bars .b{flex:1;height:44px;border-radius:9px;}
+
+  /* swatch cards */
+  .swatch{padding:58px 30px 26px;display:flex;flex-direction:column;gap:14px;}
+  .swcard{flex:1;border-radius:11px;display:flex;justify-content:space-between;align-items:flex-end;padding:16px 18px;}
+  .swcard .nm{font-size:15px;font-weight:600;}
+  .swcard .hx{font-size:11px;letter-spacing:.12em;opacity:.75;}
+  .swcard .role{font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.65;margin-top:3px;}
+  .swatch .note{font-size:11px;line-height:1.6;color:#8A99A8;letter-spacing:.03em;}
+
+  /* gradient panel */
+  .p4{padding:58px 32px 28px;display:flex;flex-direction:column;gap:14px;}
+  .grad{flex:1;border-radius:11px;position:relative;overflow:hidden;}
+  .grad .tag{position:absolute;bottom:14px;left:16px;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.85);font-weight:500;}
+  .grad .hexs{position:absolute;bottom:14px;right:16px;font-size:9.5px;letter-spacing:.1em;color:rgba(255,255,255,.5);}
+
+  /* proportions */
+  .p5{padding:58px 32px 28px;display:flex;flex-direction:column;gap:18px;}
+  .propbar{display:flex;height:56px;border-radius:11px;overflow:hidden;}
+  .propbar div{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;letter-spacing:.08em;}
+  .pt{display:flex;justify-content:space-between;font-size:11.5px;color:#93A3B3;}
+  .pt b{color:#DDE7F2;font-weight:600;}
+  .ratio{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;}
+  .ratio .pair2{display:flex;align-items:center;gap:10px;font-size:12px;}
+  .ratio .aa{padding:5px 11px;border-radius:6px;font-weight:600;font-size:12px;}
+  .ratio .score{font-size:17px;font-weight:700;color:#7CC8FE;}
+  .ratio .score.warn{color:#FEBC2E;}
+
+  /* accessibility / usage */
+  .p6{padding:58px 32px 28px;display:flex;flex-direction:column;gap:14px;}
+  .accrow{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:11px;padding:13px 18px;}
+  .accrow .l{font-size:12.5px;color:#C9D5E2;}
+  .accrow .r{font-size:11px;letter-spacing:.1em;color:#7CC8FE;font-weight:600;}
+  .accrow .r.warn{color:#FEBC2E;}
+</style></head>
+<body>
+  <div class="deck-head">
+    <div class="brandline"><div class="dot"></div><div class="name">Yatrio</div></div>
+    <div class="sec">Color System</div>
+    <div class="pageno"><b>03</b> / 05</div>
+  </div>
+
+  <div class="board">
+    <!-- 1 hero: azure -->
+    <div class="panel light p1">
+      <div class="plabel"><span class="idx">01</span> — Primary</div>
+      <div class="big">
+        <div class="role">Signal / Accent — 10%</div>
+        <div class="nm">Azure</div>
+        <div class="hex">#0080F8 · RGB 0 128 248</div>
+      </div>
+      <div class="bars">
+        <div class="b" style="background:#04275B;"></div>
+        <div class="b" style="background:#014CA9;"></div>
+        <div class="b" style="background:#3BB3FD;"></div>
+        <div class="b" style="background:#F7F9FC;border:1px solid var(--line-dark);"></div>
+      </div>
+    </div>
+
+    <!-- 2 core blues -->
+    <div class="panel light swatch">
+      <div class="plabel"><span class="idx">02</span> — Core Palette</div>
+      <div class="swcard" style="background:#04275B;">
+        <div><div class="nm" style="color:#EAF2FB;">Deep Navy</div><div class="role" style="color:#8FB4E0;">Foundation</div></div>
+        <div class="hx" style="color:#B9D2F0;">#04275B</div>
+      </div>
+      <div class="swcard" style="background:#014CA9;">
+        <div><div class="nm" style="color:#F0F6FE;">Royal Blue</div><div class="role" style="color:#A9C9EF;">Primary Action</div></div>
+        <div class="hx" style="color:#CFE2F8;">#014CA9</div>
+      </div>
+      <div class="swcard" style="background:#3BB3FD;">
+        <div><div class="nm" style="color:#062A4E;">Sky</div><div class="role" style="color:#0D4B7E;">Highlight / Dot</div></div>
+        <div class="hx" style="color:#0A3C68;">#3BB3FD</div>
+      </div>
+    </div>
+
+    <!-- 3 neutrals -->
+    <div class="panel light swatch">
+      <div class="plabel"><span class="idx">03</span> — Neutrals &amp; Ink</div>
+      <div class="swcard" style="background:#071426;">
+        <div><div class="nm" style="color:#E8EEF5;">Ink</div><div class="role" style="color:#93A6BA;">Headlines</div></div>
+        <div class="hx" style="color:#AAB9C9;">#071426</div>
+      </div>
+      <div class="swcard" style="background:#E9EEF4;">
+        <div><div class="nm" style="color:#3D4E61;">Fog</div><div class="role" style="color:#71839A;">Surfaces / Dividers</div></div>
+        <div class="hx" style="color:#5E7086;">#E9EEF4</div>
+      </div>
+      <div class="swcard" style="background:#FFFFFF;border:1px solid var(--line-dark);">
+        <div><div class="nm" style="color:#20303F;">Paper</div><div class="role" style="color:#7A8B9C;">Canvas</div></div>
+        <div class="hx" style="color:#66788C;">#F7F9FC</div>
+      </div>
+      <div class="note">Neutrals stay cool — every gray leans blue to keep the system in Yatrio's temperature.</div>
+    </div>
+
+    <!-- 4 gradients -->
+    <div class="panel light p4">
+      <div class="plabel"><span class="idx">04</span> — Signature Gradient</div>
+      <div class="grad" style="background:linear-gradient(135deg,#04275B 0%,#014CA9 55%,#0080F8 100%);">
+        <div class="tag">Horizon — hero surfaces</div><div class="hexs">#04275B → #0080F8</div>
+      </div>
+      <div class="grad" style="background:linear-gradient(90deg,#014CA9,#3BB3FD);">
+        <div class="tag">Velocity — buttons, progress</div><div class="hexs">#014CA9 → #3BB3FD</div>
+      </div>
+      <div class="grad" style="background:linear-gradient(180deg,#081221,#0E3B74);">
+        <div class="tag">Dusk — image overlays</div><div class="hexs">#081221 → #0E3B74</div>
+      </div>
+    </div>
+
+    <!-- 5 proportion -->
+    <div class="panel light p5">
+      <div class="plabel"><span class="idx">05</span> — Proportion &amp; Contrast</div>
+      <div class="propbar">
+        <div style="flex:60;background:#F7F9FC;color:#5E7086;border:1px solid var(--line-dark);">60</div>
+        <div style="flex:25;background:#04275B;color:#B9D2F0;">25</div>
+        <div style="flex:10;background:#014CA9;color:#CFE2F8;">10</div>
+        <div style="flex:5;background:#0080F8;color:#04305C;">5</div>
+      </div>
+      <div class="pt"><span><b>60</b> Paper</span><span><b>25</b> Deep Navy</span><span><b>10</b> Royal</span><span><b>5</b> Azure</span></div>
+      <div class="ratio">
+        <div class="pair2"><span class="aa" style="background:#04275B;color:#fff;">Aa</span><span style="color:#93A3B3;">on Paper</span></div>
+        <div class="score">15.8 AAA</div>
+      </div>
+      <div class="ratio">
+        <div class="pair2"><span class="aa" style="background:#fff;color:#071426;border:1px solid var(--line-dark);">Aa</span><span style="color:#93A3B3;">on Royal</span></div>
+        <div class="score">8.1 AAA</div>
+      </div>
+      <div class="ratio">
+        <div class="pair2"><span class="aa" style="background:#0080F8;color:#fff;">Aa</span><span style="color:#93A3B3;">on Azure</span></div>
+        <div class="score warn">3.9 AA-L</div>
+      </div>
+    </div>
+
+    <!-- 6 usage rules -->
+    <div class="panel inkbg p6">
+      <div class="plabel"><span class="idx">06</span> — Application Rules</div>
+      <div class="accrow"><div class="l">Azure is a signal, not a surface — max 10% of any layout</div><div class="r">ACCENT</div></div>
+      <div class="accrow"><div class="l">Body text never below #5E7086 on light surfaces</div><div class="r">READABILITY</div></div>
+      <div class="accrow"><div class="l">Gradients run 135° — same direction as the monogram diagonal</div><div class="r">GEOMETRY</div></div>
+      <div class="accrow"><div class="l">White text on Azure: large type only (≥24px / 18px bold)</div><div class="r warn">CAUTION</div></div>
+      <div class="accrow"><div class="l">Success #28C840 · Warning #FEBC2E · Error #FF5F57 — status only</div><div class="r">SEMANTIC</div></div>
+    </div>
+  </div>
+</body></html>

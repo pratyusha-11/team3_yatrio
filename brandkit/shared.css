@@ -1,0 +1,87 @@
+@font-face { font-family:'Poppins'; src:url('assets/Poppins-400.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'Poppins'; src:url('assets/Poppins-500.woff2') format('woff2'); font-weight:500; }
+@font-face { font-family:'Poppins'; src:url('assets/Poppins-600.woff2') format('woff2'); font-weight:600; }
+@font-face { font-family:'Poppins'; src:url('assets/Poppins-700.woff2') format('woff2'); font-weight:700; }
+
+:root{
+  --ink:#071426;          /* wordmark navy-ink */
+  --navy:#04275B;         /* deep royal navy */
+  --royal:#014CA9;        /* primary blue */
+  --azure:#0080F8;        /* bright azure accent */
+  --sky:#3BB3FD;          /* dot blue */
+  --fog:#E9EEF4;          /* cool light gray */
+  --paper:#F7F9FC;        /* light panel */
+  --char:#0B0F14;         /* outer charcoal */
+  --panel-dark:#0E1621;   /* dark panel */
+  --mut:#7A8794;          /* muted label */
+  --line:rgba(255,255,255,.10);
+  --line-dark:rgba(7,20,38,.12);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1920px;height:1080px;overflow:hidden;}
+body{
+  font-family:'Poppins',sans-serif;
+  background:var(--char);
+  color:#E8EDF3;
+  display:flex;flex-direction:column;
+  padding:56px 64px 48px;
+}
+
+/* ---------- chrome ---------- */
+.deck-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding-bottom:22px;
+}
+.deck-head .brandline{display:flex;align-items:center;gap:16px;}
+.deck-head .dot{width:12px;height:12px;border-radius:50%;background:var(--sky);}
+.deck-head .name{font-weight:600;font-size:20px;letter-spacing:.22em;text-transform:uppercase;color:#DDE6F0;}
+.deck-head .sec{font-weight:500;font-size:15px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut);}
+.deck-head .pageno{font-size:14px;letter-spacing:.18em;color:var(--mut);}
+.deck-head .pageno b{color:var(--sky);font-weight:600;}
+
+.board{
+  flex:1;display:grid;gap:18px;min-height:0;
+}
+.panel{
+  position:relative;border-radius:14px;overflow:hidden;
+  background:var(--panel-dark);
+  border:1px solid var(--line);
+}
+.panel.light{background:var(--paper);border-color:var(--line-dark);color:var(--ink);}
+.panel.navybg{background:linear-gradient(135deg,#04275B 0%,#014CA9 78%,#0A63C6 100%);border-color:rgba(255,255,255,.14);}
+.panel.inkbg{background:linear-gradient(150deg,#081221 0%,#0B1B33 100%);}
+
+.plabel{
+  position:absolute;top:18px;left:22px;
+  font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--mut);z-index:5;
+}
+.panel.light .plabel{color:#8A96A3;}
+.panel.navybg .plabel,.panel.inkbg .plabel{color:rgba(255,255,255,.55);}
+.plabel .idx{color:var(--sky);}
+.panel.light .plabel .idx{color:var(--royal);}
+
+.corner{
+  position:absolute;top:18px;right:22px;font-size:11px;letter-spacing:.2em;
+  color:rgba(255,255,255,.35);z-index:5;font-weight:500;
+}
+.panel.light .corner{color:rgba(7,20,38,.35);}
+
+img.logo{display:block;}
+
+/* subtle blueprint grid utility */
+.gridbg::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(59,179,253,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(59,179,253,.07) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+.gridbg-light::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(1,76,169,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(1,76,169,.06) 1px,transparent 1px);
+  background-size:44px 44px;
+}

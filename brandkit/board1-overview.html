@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  .board{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);}
+
+  /* 1. logo cover — dark, centered lockup */
+  .p1{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .p1 img{width:70%;filter:drop-shadow(0 18px 40px rgba(0,60,140,.35));}
+  .p1 .est{margin-top:22px;font-size:12px;letter-spacing:.44em;text-transform:uppercase;color:rgba(255,255,255,.48);}
+
+  /* 2. brand essence — light, big type */
+  .p2{display:flex;flex-direction:column;justify-content:center;padding:56px 44px 0;}
+  .p2 h2{font-size:50px;line-height:1.1;font-weight:700;color:var(--ink);letter-spacing:-.015em;}
+  .p2 h2 em{font-style:normal;color:var(--royal);}
+  .p2 p{margin-top:14px;font-size:15px;line-height:1.5;color:#5A6B7E;max-width:92%;}
+
+  /* 3. logo construction — navy bg, geometry */
+  .p3{display:flex;align-items:center;justify-content:center;}
+  .p3 .stage{position:relative;width:78%;display:flex;align-items:center;justify-content:center;}
+  .p3 .mono{width:64%;position:relative;z-index:2;filter:drop-shadow(0 14px 34px rgba(0,10,40,.55));}
+  .p3 .glow{position:absolute;width:120%;aspect-ratio:1.6;border-radius:50%;background:radial-gradient(ellipse,rgba(59,179,253,.28) 0%,rgba(59,179,253,0) 68%);}
+  .p3 .circ{position:absolute;border:1px dashed rgba(255,255,255,.35);border-radius:50%;}
+  .p3 .c1{width:118%;aspect-ratio:1;left:-9%;}
+  .p3 .c2{width:74%;aspect-ratio:1;left:13%;top:6%;border-color:rgba(59,179,253,.5);}
+  .p3 .xline{position:absolute;inset:0;border:1px solid rgba(255,255,255,.18);border-radius:8px;}
+  .p3 .diag{position:absolute;left:-4%;right:-4%;top:50%;height:1px;background:rgba(59,179,253,.55);transform:rotate(-14deg);}
+
+  /* 4. digital application — browser */
+  .p4{display:flex;align-items:center;justify-content:center;padding:44px 0 0;}
+  .browser{width:82%;border-radius:12px;background:#FFFFFF;border:1px solid rgba(7,20,38,.12);overflow:hidden;box-shadow:0 22px 50px rgba(0,20,50,.35);}
+  .bbar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#EEF2F7;border-bottom:1px solid rgba(7,20,38,.08);}
+  .bbar .rdot{width:9px;height:9px;border-radius:50%;background:#FF5F57;}
+  .bbar .ydot{width:9px;height:9px;border-radius:50%;background:#FEBC2E;}
+  .bbar .gdot{width:9px;height:9px;border-radius:50%;background:#28C840;}
+  .bbar .url{margin-left:10px;flex:1;background:#fff;border-radius:6px;font-size:11px;color:#5E6E80;padding:5px 12px;letter-spacing:.06em;border:1px solid rgba(7,20,38,.08);}
+  .bbody{padding:26px 26px 30px;display:flex;flex-direction:column;gap:16px;}
+  .bbody img{width:24%;}
+  .brow{display:flex;gap:10px;align-items:center;}
+  .pill{background:linear-gradient(90deg,var(--royal),var(--azure));border-radius:7px;color:#fff;font-size:12px;font-weight:600;padding:9px 18px;letter-spacing:.04em;}
+  .pill.ghost{background:transparent;border:1px solid rgba(7,20,38,.2);color:#42536A;font-weight:500;}
+  .bline{height:8px;border-radius:4px;background:#E4EAF1;}
+  .bline.w1{width:88%;} .bline.w2{width:64%;} .bline.w3{width:74%;}
+
+  /* 5. color system strip */
+  .p5{display:flex;flex-direction:column;padding:52px 26px 26px;gap:12px;}
+  .p5 .sw{flex:1;border-radius:9px;display:flex;align-items:flex-end;padding:9px 12px;}
+  .p5 .sw span{font-size:11.5px;font-weight:600;letter-spacing:.1em;}
+  .p5 .s1{background:#04275B;} .p5 .s1 span{color:#BFD6F2;}
+  .p5 .s2{background:#014CA9;} .p5 .s2 span{color:#D8E8FB;}
+  .p5 .s3{background:#0080F8;} .p5 .s3 span{color:#04305C;}
+  .p5 .s4{background:#3BB3FD;} .p5 .s4 span{color:#073257;}
+  .p5 .s5{background:#F7F9FC;border:1px solid var(--line-dark);} .p5 .s5 span{color:#6B7A8A;}
+
+  /* 6. typography */
+  .p6{padding:52px 40px 32px;display:flex;flex-direction:column;}
+  .p6 .big{font-size:88px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;}
+  .p6 .big i{font-style:normal;color:var(--azure);}
+  .p6 .alph{margin-top:18px;font-size:19px;letter-spacing:.28em;color:#52627A;font-weight:500;}
+  .p6 .pair{margin-top:auto;display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line-dark);padding-top:16px;}
+  .p6 .pair .a{font-size:15px;color:var(--ink);font-weight:600;}
+  .p6 .pair .b{font-size:13px;color:#8393A5;}
+
+  /* 7. physical application — ticket */
+  .p7{display:flex;align-items:center;justify-content:center;}
+  .ticket{width:84%;background:#fff;border-radius:12px;color:var(--ink);overflow:hidden;box-shadow:0 20px 44px rgba(0,10,30,.5);display:flex;}
+  .ticket .main{flex:1;padding:18px 20px 16px;}
+  .ticket .route{display:flex;align-items:center;gap:12px;margin-top:6px;}
+  .ticket .st{font-size:26px;font-weight:700;letter-spacing:-.01em;}
+  .ticket .arrow{flex:1;height:2px;background:linear-gradient(90deg,var(--royal),var(--azure));position:relative;}
+  .ticket .arrow::after{content:'';position:absolute;right:-1px;top:-3.5px;border-left:7px solid var(--azure);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;}
+  .ticket .meta{margin-top:12px;display:flex;gap:20px;font-size:10.5px;color:#67788B;letter-spacing:.06em;}
+  .ticket .meta b{display:block;color:var(--ink);font-size:13px;font-weight:600;margin-top:2px;letter-spacing:0;}
+  .ticket .stub{width:86px;border-left:2px dashed #D5DDE6;padding:16px 12px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;background:#FAFCFE;}
+  .ticket .stub img{width:58px;}
+  .ticket .stub .seat{text-align:center;font-size:9.5px;color:#8A99AA;letter-spacing:.12em;}
+  .ticket .stub .seat b{display:block;font-size:16px;color:var(--royal);letter-spacing:.02em;}
+
+  /* 8. image direction — cinematic scene */
+  .p8{display:flex;align-items:flex-end;}
+  .p8 .scene{position:absolute;inset:0;background:linear-gradient(180deg,#050D19 0%,#0A2140 55%,#0E3B74 100%);}
+  .p8 .sun{position:absolute;left:50%;top:30%;width:230px;height:230px;border-radius:50%;transform:translate(-50%,0);background:radial-gradient(circle,#3BB3FD 0%,rgba(59,179,253,0) 70%);opacity:.55;}
+  .p8 .track{position:absolute;left:-4%;right:-4%;bottom:34%;height:3px;background:linear-gradient(90deg,transparent,#1E5FA8 18%,#3BB3FD 82%,transparent);opacity:.8;}
+  .p8 .train{position:absolute;bottom:calc(34% - 40px);left:24%;width:34%;filter:drop-shadow(0 16px 30px rgba(0,30,80,.65));}
+  .p8 .speed{position:absolute;left:-6%;bottom:calc(34% + 18px);width:30%;display:flex;flex-direction:column;gap:8px;}
+  .p8 .cap{position:relative;z-index:2;width:100%;padding:0 26px 22px;display:flex;justify-content:space-between;align-items:flex-end;}
+  .p8 .cap .t{font-size:13px;color:#DCE9F7;font-weight:500;letter-spacing:.06em;max-width:60%;line-height:1.5;}
+  .p8 .cap .n{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.2em;}
+
+  /* 9. system detail — UI chips */
+  .p9{padding:52px 26px 24px;display:flex;flex-direction:column;gap:13px;}
+  .chipline{display:flex;gap:10px;align-items:center;}
+  .chip{border-radius:8px;padding:8px 14px;font-size:12px;font-weight:500;letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
+  .chip .cdot{width:7px;height:7px;border-radius:50%;}
+  .chip.live{background:rgba(40,200,112,.12);color:#5FE39A;border:1px solid rgba(40,200,112,.3);}
+  .chip.live .cdot{background:#28C840;}
+  .chip.delay{background:rgba(255,95,87,.12);color:#FF8A84;border:1px solid rgba(255,95,87,.3);}
+  .chip.delay .cdot{background:#FF5F57;}
+  .chip.ontime{background:rgba(59,179,253,.12);color:#7CC8FE;border:1px solid rgba(59,179,253,.35);}
+  .chip.ontime .cdot{background:#3BB3FD;}
+  .btn{background:linear-gradient(90deg,var(--royal),var(--azure));border-radius:8px;color:#fff;font-weight:600;padding:9px 16px;font-size:12px;letter-spacing:.04em;}
+  .stat{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:9px;padding:12px 14px;}
+  .stat .k{font-size:10px;color:#8A99AB;letter-spacing:.14em;text-transform:uppercase;}
+  .stat .v{font-size:21px;font-weight:700;color:#EAF2FA;margin-top:3px;}
+  .stat .v i{font-style:normal;color:var(--sky);font-size:12px;font-weight:600;margin-left:6px;}
+  .statrow{display:flex;gap:13px;margin-top:auto;}
+</style></head>
+<body>
+  <div class="deck-head">
+    <div class="brandline"><div class="dot"></div><div class="name">Yatrio</div></div>
+    <div class="sec">Brand Identity System</div>
+    <div class="pageno"><b>01</b> / 05</div>
+  </div>
+
+  <div class="board">
+    <!-- 1 logo cover -->
+    <div class="panel inkbg gridbg p1">
+      <div class="plabel"><span class="idx">01</span> — Primary Lockup</div>
+      <img src="assets/logo-white.png" alt="Yatrio logo">
+      <div class="est">Move Beyond Limits</div>
+    </div>
+
+    <!-- 2 essence -->
+    <div class="panel light gridbg-light p2">
+      <div class="plabel"><span class="idx">02</span> — Brand Essence</div>
+      <h2>Rail journeys,<br>reimagined <em>in motion.</em></h2>
+      <p>Yatrio puts every trip in the traveler's hand — live trains, honest timings, and booking that feels as fast as the train itself.</p>
+    </div>
+
+    <!-- 3 construction -->
+    <div class="panel navybg p3">
+      <div class="plabel"><span class="idx">03</span> — Logo Construction</div>
+      <div class="stage">
+        <div class="glow"></div>
+        <div class="circ c1"></div>
+        <div class="circ c2"></div>
+        <div class="xline"></div>
+        <div class="diag"></div>
+        <img class="mono" src="assets/logo-monogram.png" alt="Yatrio monogram">
+      </div>
+      <div class="corner">Y + BULLET TRAIN / NEGATIVE SPACE</div>
+    </div>
+
+    <!-- 4 digital application -->
+    <div class="panel light p4">
+      <div class="plabel"><span class="idx">04</span> — Digital Application</div>
+      <div class="browser">
+        <div class="bbar">
+          <div class="rdot"></div><div class="ydot"></div><div class="gdot"></div>
+          <div class="url">yatrio.com/book</div>
+        </div>
+        <div class="bbody">
+          <img src="assets/logo-mono-navy.png" alt="logo">
+          <div class="brow"><div class="pill">Book Ticket</div><div class="pill ghost">Live Status</div></div>
+          <div class="bline w1"></div><div class="bline w2"></div><div class="bline w3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 color -->
+    <div class="panel light p5">
+      <div class="plabel"><span class="idx">05</span> — Color System</div>
+      <div class="sw s1"><span>#04275B</span></div>
+      <div class="sw s2"><span>#014CA9</span></div>
+      <div class="sw s3"><span>#0080F8</span></div>
+      <div class="sw s4"><span>#3BB3FD</span></div>
+      <div class="sw s5"><span>#F7F9FC</span></div>
+    </div>
+
+    <!-- 6 typography -->
+    <div class="panel light p6">
+      <div class="plabel"><span class="idx">06</span> — Typography</div>
+      <div class="big">Aa Tr<i>a</i>vel</div>
+      <div class="alph">ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789</div>
+      <div class="pair"><div class="a">Poppins Bold / Display</div><div class="b">Poppins Regular / Body — Inter for UI</div></div>
+    </div>
+
+    <!-- 7 physical -->
+    <div class="panel inkbg gridbg p7">
+      <div class="plabel"><span class="idx">07</span> — Physical Application</div>
+      <div class="ticket">
+        <div class="main">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <img src="assets/logo-mono-navy.png" style="width:74px;" alt="logo">
+            <span style="font-size:10px;letter-spacing:.18em;color:#8A99AA;">E-TICKET · AC SLEEPER</span>
+          </div>
+          <div class="route"><div class="st">NDLS</div><div class="arrow"></div><div class="st">MTJ</div></div>
+          <div class="meta">
+            <div>TRAIN<b>12951 RJDHANI</b></div>
+            <div>DEPART<b>16:55</b></div>
+            <div>SEAT<b>B4 · 27</b></div>
+          </div>
+        </div>
+        <div class="stub">
+          <img src="assets/logo-monogram.png" alt="mark">
+          <div class="seat">COACH<b>B4</b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 image direction -->
+    <div class="panel p8">
+      <div class="scene"></div><div class="sun"></div>
+      <div class="track"></div>
+      <div class="speed">
+        <div style="height:2px;background:linear-gradient(90deg,transparent,rgba(59,179,253,.85));width:100%;"></div>
+        <div style="height:2px;background:linear-gradient(90deg,transparent,rgba(59,179,253,.55));width:72%;"></div>
+        <div style="height:2px;background:linear-gradient(90deg,transparent,rgba(59,179,253,.35));width:48%;"></div>
+      </div>
+      <img class="train" src="assets/logo-monogram.png" alt="train mark" style="opacity:.95;">
+      <div class="cap">
+        <div class="t">Image direction — dusk gradients, motion streaks, rail-horizon minimalism.</div>
+        <div class="n">08 — ATMOSPHERE</div>
+      </div>
+    </div>
+
+    <!-- 9 system detail -->
+    <div class="panel inkbg p9">
+      <div class="plabel"><span class="idx">09</span> — System Detail</div>
+      <div class="chipline">
+        <div class="chip ontime"><span class="cdot"></span>On Time · 16:55</div>
+        <div class="chip live"><span class="cdot"></span>Live · 212 km/h</div>
+        <div class="chip delay"><span class="cdot"></span>Delayed · 12m</div>
+      </div>
+      <div class="chipline">
+        <div class="btn">Confirm Booking</div>
+        <div class="chip" style="border:1px solid var(--line);color:#B9C6D4;">PNR 448 · 219</div>
+      </div>
+      <div class="statrow">
+        <div class="stat"><div class="k">Trains Live</div><div class="v">12,480<i>+3.2%</i></div></div>
+        <div class="stat"><div class="k">On-Time Rate</div><div class="v">94.6%<i>▲</i></div></div>
+        <div class="stat"><div class="k">Travelers</div><div class="v">8.2M<i>+11%</i></div></div>
+      </div>
+    </div>
+  </div>
+</body></html>
