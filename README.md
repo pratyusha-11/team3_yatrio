@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="brandkit/assets/hero-banner.png" alt="Yatrio logo" width="100%">
+<img src="https://github.com/user-attachments/assets/118e4e95-2546-44cb-9594-65fcb67cc968" alt="Yatrio logo" width="100%">
 
 ### Move Beyond Limits
 
@@ -30,7 +30,7 @@ Yatrio puts every trip in the traveler's hand — live trains, honest timings, a
 This repository is the **Yatrio MERN Railway Booking Demo**. It connects to an **IRCTC / authorised Railway API** for real search and status data, but all payments run in **Razorpay TEST MODE** and every booking, PNR, and ticket is a **demo artifact** — **no real IRCTC ticket booking is performed**.
 
 <div align="center">
-  <img src="brandkit/assets/logo-white.png" alt="Yatrio primary lockup" width="220">
+  <img src="https://github.com/user-attachments/assets/842801d0-cff9-4d6f-9729-e80a67a2c6f9" alt="Yatrio primary lockup" width="220">
   <p><sub>Primary lockup — "Move Beyond Limits"</sub></p>
 </div>
 
@@ -65,21 +65,52 @@ This repository is the **Yatrio MERN Railway Booking Demo**. It connects to an *
 └────────────┘  └──────────────┘  └─────────────────┘
 ```
 
+<table width="100%">
+<tr>
+<td width="78%" valign="top">
+
 ### Application Modules
 
-| Module | Responsibilities |
-| --- | --- |
-| **Auth** | Login, Register, Sessions |
-| **Railway** | Search, Availability, Schedule, Live Status, PNR |
-| **Booking** | Passenger, Fare, Booking, Ticket |
-| **Payment** | Razorpay test-mode orders, verification |
-| **Optional** | Confirmation Prediction, Alternative Routes / Trains |
+<table width="100%">
+<tr>
+<th>Module</th>
+<th>Responsibilities</th>
+</tr>
+<tr>
+<td><b>Auth</b></td>
+<td>Login, Register, Sessions</td>
+</tr>
+<tr>
+<td><b>Railway</b></td>
+<td>Search, Availability, Schedule, Live Status, PNR</td>
+</tr>
+<tr>
+<td><b>Booking</b></td>
+<td>Passenger, Fare, Booking, Ticket</td>
+</tr>
+<tr>
+<td><b>Payment</b></td>
+<td>Razorpay test-mode orders, verification</td>
+</tr>
+<tr>
+<td><b>Optional</b></td>
+<td>Confirmation Prediction, Alternative Routes / Trains</td>
+</tr>
+</table>
 
-<div align="center">
-  <img src="brandkit/assets/logo-monogram.png" alt="Yatrio monogram" width="120">
-</div>
+</td>
 
-<br>
+<td width="22%" align="center" valign="middle">
+
+<img
+  src="https://github.com/user-attachments/assets/a2cd61ce-4a91-4abf-905a-f7c2bcd8c6eb"
+  alt="Yatrio monogram"
+  width="150"
+/>
+
+</td>
+</tr>
+</table>
 
 ## ✨ Features
 
@@ -233,17 +264,82 @@ Three persistence options — **choose ONE primary DB**:
 
 ## 🎨 Brand Kit
 
-<kbd><img src="brandkit/assets/logo-original.png" alt="Yatrio original logo" width="110"></kbd>
-&nbsp;
-<kbd><img src="brandkit/assets/logo-azure.png" alt="Yatrio azure logo" width="110"></kbd>
-&nbsp;
-<kbd><img src="brandkit/assets/logo-mono-navy.png" alt="Yatrio navy monogram" width="110"></kbd>
-&nbsp;
-<kbd><img src="brandkit/assets/logo-mono-white.png" alt="Yatrio white monogram" width="110" style="background:#0B1B33"></kbd>
+<table>
+  <tr>
+    <!-- Original -->
+    <td align="center" valign="middle" style="background:#F7F9FC; width:150px; height:110px; padding:8px;">
+      <div style="width:130px; height:90px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+        <img
+          src="https://github.com/user-attachments/assets/ec18333f-7054-468b-935f-1ac08a62aa97"
+          alt="Yatrio original logo"
+          width="120"
+        >
+      </div>
+    </td>
+    <td align="center" valign="middle" style="background:#F7F9FC; width:150px; height:110px; padding:8px;">
+      <img
+        src="https://github.com/user-attachments/assets/4fa0a403-24bc-497c-85ff-dbc0491b837b"
+        alt="Yatrio azure logo"
+        width="120"
+      >
+    </td>
+    <td align="center" valign="middle" style="background:#FFFFFF; width:150px; height:110px; padding:8px;">
+      <div style="width:130px; height:90px; background:#FFFFFF; display:flex; align-items:center; justify-content:center;">
+        <img
+          src="https://github.com/user-attachments/assets/ac09f82d-eea1-4c01-bca4-8e31f173a349"
+          alt="Yatrio navy monogram"
+          width="95"
+        >
+      </div>
+    </td>
+    <td align="center" valign="middle" style="background:#0B1B33; width:150px; height:110px; padding:8px;">
+      <div style="width:130px; height:90px; background:#0B1B33; display:flex; align-items:center; justify-content:center;">
+        <img
+          src="https://github.com/user-attachments/assets/e859dbef-e8a3-44e6-9c44-724ae0b1468c"
+          alt="Yatrio white monogram"
+          width="95"
+        >
+      </div>
+    </td>
+  </tr>
 
-*Logo variants — original · azure · navy mono · white mono*
+  <tr>
+    <td align="center"><sub>Original</sub></td>
+    <td align="center"><sub>Azure</sub></td>
+    <td align="center"><sub>Navy Mono</sub></td>
+    <td align="center"><sub>White Mono</sub></td>
+  </tr>
+</table>
 
-**Primary Palette** — `#04275B` Navy · `#014CA9` Royal Blue · `#0080F8` Azure · `#3BB3FD` Sky · `#F7F9FC` Paper
+<br>
+
+### 🎨 Color Palette
+
+| Swatch | Color | Hex | When to Use |
+|:---:|---|---|---|
+| <img valign="middle" src="https://readme-swatches.vercel.app/04275B?style=square&size=28" alt="Navy"> | **Navy** | `#04275B` | Navbar, footer, primary brand surfaces |
+| <img valign="middle" src="https://readme-swatches.vercel.app/014CA9?style=square&size=28" alt="Royal Blue"> | **Royal Blue** | `#014CA9` | Links, secondary buttons, active states |
+| <img valign="middle" src="https://readme-swatches.vercel.app/0080F8?style=square&size=28" alt="Azure"> | **Azure** | `#0080F8` | Primary CTA, buttons, key interactions |
+| <img valign="middle" src="https://readme-swatches.vercel.app/3BB3FD?style=square&size=28" alt="Sky"> | **Sky** | `#3BB3FD` | Hover states, icons, accents |
+| <img valign="middle" src="https://readme-swatches.vercel.app/F7F9FC?style=square&size=28" alt="Paper"> | **Paper** | `#F7F9FC` | Page backgrounds, light sections |
+| <img valign="middle" src="https://readme-swatches.vercel.app/FFFFFF?style=square&size=28" alt="White"> | **White** | `#FFFFFF` | Cards, logo backgrounds, clean surfaces |
+
+### Extended Shades
+
+| Swatch | Shade | Hex | Usage |
+|:---:|---|---|---|
+| <img valign="middle" src="https://readme-swatches.vercel.app/021B40?style=square&size=28" alt="Navy 950"> | Navy 950 | `#021B40` | Deep backgrounds |
+| <img valign="middle" src="https://readme-swatches.vercel.app/04275B?style=square&size=28" alt="Navy 900"> | Navy 900 | `#04275B` | Core brand |
+| <img valign="middle" src="https://readme-swatches.vercel.app/0B3A7A?style=square&size=28" alt="Navy 700"> | Navy 700 | `#0B3A7A` | Dark secondary surfaces |
+| <img valign="middle" src="https://readme-swatches.vercel.app/014CA9?style=square&size=28" alt="Royal 600"> | Royal 600 | `#014CA9` | Secondary actions |
+| <img valign="middle" src="https://readme-swatches.vercel.app/0080F8?style=square&size=28" alt="Azure 500"> | Azure 500 | `#0080F8` | Primary actions |
+| <img valign="middle" src="https://readme-swatches.vercel.app/3BB3FD?style=square&size=28" alt="Sky 400"> | Sky 400 | `#3BB3FD` | Accents / hover |
+| <img valign="middle" src="https://readme-swatches.vercel.app/A9DEFC?style=square&size=28" alt="Sky 200"> | Sky 200 | `#A9DEFC` | Soft highlights |
+| <img valign="middle" src="https://readme-swatches.vercel.app/E6F4FF?style=square&size=28" alt="Blue 100"> | Blue 100 | `#E6F4FF` | Info backgrounds |
+| <img valign="middle" src="https://readme-swatches.vercel.app/F7F9FC?style=square&size=28" alt="Paper 50"> | Paper 50 | `#F7F9FC` | Main background |
+| <img valign="middle" src="https://readme-swatches.vercel.app/FFFFFF?style=square&size=28" alt="White"> | White | `#FFFFFF` | Cards / logo backgrounds |
+
+> **Yatrio color rule:** Navy establishes the identity → Royal Blue supports hierarchy → Azure drives interaction → Sky adds energy → Paper keeps the interface clean.
 
 **Typography** — Poppins Bold for display · Poppins Regular for body · Inter for UI
 
