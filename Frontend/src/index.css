@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* ---------- Yatrio brand fonts (self-hosted Poppins, from /brandkit) ---------- */
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/brand/Poppins-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/brand/Poppins-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/brand/Poppins-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/brand/Poppins-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Yatrio brand tokens ---------- */
+@theme {
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #071426;
+  --color-navy: #04275b;
+  --color-royal: #014ca9;
+  --color-azure: #0080f8;
+  --color-sky: #3bb3fd;
+  --color-fog: #e9eef4;
+  --color-paper: #f7f9fc;
+  --color-ink-soft: #5e7086;
+
+  /* status colors — semantic use only (brand board 03) */
+  --color-status-success: #28c840;
+  --color-status-warning: #febc2e;
+  --color-status-error: #ff5f57;
+}

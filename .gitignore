@@ -1,0 +1,103 @@
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+._*
+
+# Editor and IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Logs and runtime data
+*.log
+logs/
+pids/
+*.pid
+*.seed
+*.pid.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Dependencies and package managers
+node_modules/
+vendor/
+bower_components/
+.npm/
+.yarn/cache/
+.pnp.*
+
+# Build output and caches
+dist/
+build/
+out/
+coverage/
+.cache/
+.next/
+.nuxt/
+.output/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.venv/
+.tox/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+*.egg-info/
+
+# Java and JVM
+*.class
+*.jar
+*.war
+*.ear
+target/
+.gradle/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+
+# Go
+*.exe
+*.test
+*.out
+
+# Rust
+target/
+
+# Ruby
+*.gem
+.bundle/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
