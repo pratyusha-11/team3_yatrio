@@ -9,30 +9,30 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { Alert } from '@/components/ui/Alert';
 import { cn } from '@/lib/utils';
 import { trains } from '@/data/trains';
-import { Train } from '@/types';
 
 export function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const from = searchParams.get('from') || 'Mumbai Central';
   const to = searchParams.get('to') || 'Pune Junction';
   const date = searchParams.get('date') || '2026-10-15';
-  
+
   const [isLoading, setIsLoading] = useState(true);
-  const [results, setResults] = useState<Train[]>([]);
+  const [results, setResults] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
     // Simulate API call
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setResults(trains || []);
       setIsLoading(false);
     }, 1500);
+    return () => clearTimeout(timer);
   }, [from, to, date]);
 
-  const handleBookNow = (trainId: string) => {
+  const handleBookNow = (trainId) => {
     navigate(`/passenger-details?train=${trainId}`);
   };
 

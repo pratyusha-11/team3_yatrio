@@ -1,4 +1,3 @@
-
 import React, {
   createContext,
   useContext,
@@ -15,8 +14,12 @@ const PROFILE_URL = "http://localhost:5000/api/v1/users/profile";
 export interface User {
   id: string;
   name: string;
+  full_name?: string;
   email: string;
   role: "passenger" | "admin";
+  phone?: string;
+  createdAt?: string;
+  created_at?: string;
 }
 
 // AuthContext type
@@ -110,6 +113,9 @@ export function AuthProvider({
       name: result.data.name,
       email: result.data.email,
       role: result.data.role || "passenger",
+      phone: result.data.phone || "",
+      createdAt: result.data.createdAt || result.data.created_at || "",
+      created_at: result.data.created_at || result.data.createdAt || "",
     };
 
     // Store the JWT and user information
@@ -161,9 +167,6 @@ export function AuthProvider({
           `Registration failed with HTTP ${response.status}.`
       );
     }
-
-    // Registration does not log the user in.
-    // The user must log in separately to receive a JWT.
   };
 
   // GET PROTECTED PROFILE
@@ -192,6 +195,20 @@ export function AuthProvider({
       throw new Error(
         result.message || "Failed to retrieve your profile."
       );
+    }
+
+    if (result.user) {
+      const updatedUser: User = {
+        id: String(result.user.id),
+        name: result.user.name || result.user.full_name,
+        email: result.user.email,
+        role: result.user.role || "passenger",
+        phone: result.user.phone || "",
+        createdAt: result.user.createdAt || result.user.created_at || "",
+        created_at: result.user.created_at || result.user.createdAt || "",
+      };
+      localStorage.setItem("railconnect_user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
     }
 
     return result;

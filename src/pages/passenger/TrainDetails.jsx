@@ -10,29 +10,50 @@ import { trains } from '@/data/trains';
 export function TrainDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  // Mock train data
-  const train = trains?.find(t => t.id === id) || {
-    id: '1', number: '12127', name: 'Intercity Express', type: 'Superfast'
+
+  // Train data
+  const train = trains?.find((t) => t.id === id || t.number === id) || {
+    id: '1',
+    number: '12127',
+    name: 'Intercity Express',
+    type: 'Superfast'
   };
 
-  const stops = [
-    { name: 'Mumbai Central', code: 'MMCT', arr: 'Source', dep: '06:40', day: 1, platform: '1', dist: 0 },
-    { name: 'Dadar', code: 'DDR', arr: '06:50', dep: '06:52', day: 1, platform: '3', dist: 6 },
-    { name: 'Thane', code: 'TNA', arr: '07:15', dep: '07:17', day: 1, platform: '5', dist: 33 },
-    { name: 'Kalyan Junction', code: 'KYN', arr: '07:42', dep: '07:45', day: 1, platform: '4', dist: 53 },
-    { name: 'Karjat', code: 'KJT', arr: '08:25', dep: '08:28', day: 1, platform: '1', dist: 99 },
-    { name: 'Lonavala', code: 'LNL', arr: '09:13', dep: '09:15', day: 1, platform: '1', dist: 127 },
-    { name: 'Pune Junction', code: 'PUNE', arr: '10:15', dep: 'Destination', day: 1, platform: '2', dist: 191 },
-  ];
+  const stops = train.stops
+    ? train.stops.map((s) => ({
+        name: s.station?.name || 'Station',
+        code: s.station?.code || 'STN',
+        arr: s.arrivalTime || 'Source',
+        dep: s.departureTime || 'Destination',
+        day: s.day || 1,
+        platform: s.platform || '1',
+        dist: s.distance || 0
+      }))
+    : [
+        { name: 'Mumbai Central', code: 'MMCT', arr: 'Source', dep: '06:40', day: 1, platform: '1', dist: 0 },
+        { name: 'Dadar', code: 'DDR', arr: '06:50', dep: '06:52', day: 1, platform: '3', dist: 6 },
+        { name: 'Thane', code: 'TNA', arr: '07:15', dep: '07:17', day: 1, platform: '5', dist: 33 },
+        { name: 'Kalyan Junction', code: 'KYN', arr: '07:42', dep: '07:45', day: 1, platform: '4', dist: 53 },
+        { name: 'Karjat', code: 'KJT', arr: '08:25', dep: '08:28', day: 1, platform: '1', dist: 99 },
+        { name: 'Lonavala', code: 'LNL', arr: '09:13', dep: '09:15', day: 1, platform: '1', dist: 127 },
+        { name: 'Pune Junction', code: 'PUNE', arr: '10:15', dep: 'Destination', day: 1, platform: '2', dist: 191 },
+      ];
 
-  const classes = [
-    { type: '1A', name: 'First AC', fare: 1450, status: 'AVAILABLE', seats: 12 },
-    { type: '2A', name: 'Second AC', fare: 1050, status: 'RAC', seats: 4 },
-    { type: '3A', name: 'Third AC', fare: 820, status: 'AVAILABLE', seats: 42 },
-    { type: 'SL', name: 'Sleeper', fare: 340, status: 'WAITING', seats: 15 },
-    { type: 'CC', name: 'AC Chair Car', fare: 650, status: 'AVAILABLE', seats: 28 }
-  ];
+  const classes = train.classes
+    ? train.classes.map((c) => ({
+        type: c.type,
+        name: c.name,
+        fare: c.fare,
+        status: (c.status || 'AVAILABLE').toUpperCase(),
+        seats: c.availableSeats || 0
+      }))
+    : [
+        { type: '1A', name: 'First AC', fare: 1450, status: 'AVAILABLE', seats: 12 },
+        { type: '2A', name: 'Second AC', fare: 1050, status: 'RAC', seats: 4 },
+        { type: '3A', name: 'Third AC', fare: 820, status: 'AVAILABLE', seats: 42 },
+        { type: 'SL', name: 'Sleeper', fare: 340, status: 'WAITING', seats: 15 },
+        { type: 'CC', name: 'AC Chair Car', fare: 650, status: 'AVAILABLE', seats: 28 }
+      ];
 
   const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
   const activeDays = [0, 1, 2, 3, 4, 5, 6]; // Daily
@@ -52,8 +73,13 @@ export function TrainDetails() {
               <Badge className="bg-secondary text-white border-transparent">{train.type}</Badge>
             </div>
             <div className="text-sm opacity-90 flex items-center gap-4">
-              <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> Mumbai Central to Pune Junction</span>
-              <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> 03h 35m</span>
+              <span className="flex items-center gap-1">
+                <MapPin className="w-4 h-4" />{' '}
+                {train.source?.name || 'Origin'} to {train.destination?.name || 'Destination'}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-4 h-4" /> {train.duration || '03h 35m'}
+              </span>
             </div>
           </div>
           <div className="bg-primary-dark p-3 rounded-lg text-center min-w-[120px]">

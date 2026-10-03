@@ -1,7 +1,7 @@
-import { Train } from '@/types';
 import { stations } from './stations';
 
-export const trains: Train[] = [
+/** @type {import('@/types').Train[]} */
+export const trains = [
   {
     id: 'tr_1',
     number: '12951',

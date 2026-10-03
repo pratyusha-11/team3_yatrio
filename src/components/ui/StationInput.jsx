@@ -3,20 +3,15 @@ import { MapPin, Search } from 'lucide-react';
 import { Input } from './Input';
 import { cn } from '@/lib/utils';
 
-export interface Station {
-  code: string;
-  name: string;
-  city?: string;
-}
-
-// Mock stations for autocomplete (would normally come from API or data file)
-const mockStations: Station[] = [
+// Mock stations for autocomplete fallback
+const mockStations = [
   { code: 'NDLS', name: 'New Delhi' },
   { code: 'CSMT', name: 'Chhatrapati Shivaji Maharaj Terminus' },
   { code: 'HWH', name: 'Howrah Junction' },
   { code: 'MAS', name: 'Chennai Central' },
   { code: 'SBC', name: 'KSR Bengaluru City' },
   { code: 'BCT', name: 'Mumbai Central' },
+  { code: 'MMCT', name: 'Mumbai Central' },
   { code: 'PNBE', name: 'Patna Junction' },
   { code: 'LKO', name: 'Lucknow NR' },
   { code: 'ADI', name: 'Ahmedabad Junction' },
@@ -28,38 +23,42 @@ const mockStations: Station[] = [
   { code: 'GHY', name: 'Guwahati' },
 ];
 
-export interface StationInputProps {
-  label?: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  error?: string;
-  className?: string;
-}
-
-export function StationInput({ label, value, onChange, placeholder = "Enter Station", error, className }: StationInputProps) {
+export function StationInput({
+  label,
+  value,
+  onChange,
+  placeholder = 'Enter Station',
+  error,
+  className
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  
+  const wrapperRef = useRef(null);
+
   // Initialize search term if value is provided and matches a station code
   useEffect(() => {
     if (value) {
-      const station = mockStations.find(s => s.code === value);
+      const station = mockStations.find((s) => s.code === value);
       if (station && !isOpen) {
         setSearchTerm(`${station.name} (${station.code})`);
+      } else if (!station && !isOpen) {
+        setSearchTerm(value);
       }
+    } else if (!value && !isOpen) {
+      setSearchTerm('');
     }
   }, [value, isOpen]);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsOpen(false);
         // Reset search term to selected value if clicking outside
-        const station = mockStations.find(s => s.code === value);
+        const station = mockStations.find((s) => s.code === value);
         if (station) {
           setSearchTerm(`${station.name} (${station.code})`);
+        } else if (value) {
+          setSearchTerm(value);
         } else {
           setSearchTerm('');
         }
@@ -69,18 +68,21 @@ export function StationInput({ label, value, onChange, placeholder = "Enter Stat
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [value]);
 
-  const filteredStations = mockStations.filter(station => 
-    station.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    station.code.toLowerCase().includes(searchTerm.toLowerCase())
-  ).slice(0, 5);
+  const filteredStations = mockStations
+    .filter(
+      (station) =>
+        station.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        station.code.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 5);
 
-  const handleSelect = (station: Station) => {
+  const handleSelect = (station) => {
     onChange(station.code);
     setSearchTerm(`${station.name} (${station.code})`);
     setIsOpen(false);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
     setIsOpen(true);
     if (e.target.value === '') {
@@ -89,7 +91,7 @@ export function StationInput({ label, value, onChange, placeholder = "Enter Stat
   };
 
   return (
-    <div ref={wrapperRef} className={cn("relative w-full", className)}>
+    <div ref={wrapperRef} className={cn('relative w-full', className)}>
       <Input
         label={label}
         value={searchTerm}
@@ -100,7 +102,7 @@ export function StationInput({ label, value, onChange, placeholder = "Enter Stat
         leftIcon={<MapPin size={16} />}
         autoComplete="off"
       />
-      
+
       {isOpen && searchTerm.length > 0 && (
         <div className="absolute z-10 w-full mt-1 bg-surface border border-border rounded-md shadow-lg max-h-60 overflow-auto">
           {filteredStations.length > 0 ? (

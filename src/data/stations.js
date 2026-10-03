@@ -1,6 +1,5 @@
-import { Station } from '@/types';
-
-export const stations: Station[] = [
+/** @type {import('@/types').Station[]} */
+export const stations = [
   { id: 'st_1', code: 'MMCT', name: 'Mumbai Central', city: 'Mumbai', state: 'Maharashtra', status: 'active' },
   { id: 'st_2', code: 'PUNE', name: 'Pune Junction', city: 'Pune', state: 'Maharashtra', status: 'active' },
   { id: 'st_3', code: 'NDLS', name: 'New Delhi', city: 'New Delhi', state: 'Delhi', status: 'active' },
