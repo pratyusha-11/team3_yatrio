@@ -1,6 +1,8 @@
+import {useState} from 'react'
 import logoWhite from './assets/brand/logo-white.png'
 import logoMonoWhite from './assets/brand/logo-mono-white.png'
 import logoMonoNavy from './assets/brand/logo-mono-navy.png'
+import  Booking from './pages/Booking.jsx'
 
 const checks = [
   { label: 'Vite dev server', detail: 'vite 8 + @vitejs/plugin-react' },
@@ -9,7 +11,12 @@ const checks = [
 ]
 
 function App() {
+  const [showBooking,setShowBooking]=useState(false)
+  if(showBooking){
+    return <Booking/>
+  }
   return (
+    
     <div className="min-h-screen bg-ink font-display text-white">
       {/* Velocity gradient edge — buttons/progress treatment from board 03 */}
       <div className="h-1.5 w-full bg-gradient-to-r from-royal via-azure to-sky" />
@@ -63,6 +70,13 @@ function App() {
           <img src={logoWhite} alt="Yatrio wordmark, white" className="h-12 w-auto" />
         </div>
 
+        <button
+           type="button"
+           onClick={() => setShowBooking(true)}
+           className="relative rounded-xl bg-azure px-6 py-3 font-semibold text-ink transition hover:bg-sky"
+        >
+  Open Railway Booking →
+</button>
         <footer className="relative text-center text-sm text-white/50">
           Edit <code className="rounded bg-white/10 px-1.5 py-0.5 text-sky">src/App.jsx</code>{' '}
           and save to test hot reload.
