@@ -8,11 +8,13 @@ RailSetu is a modern railway reservation and management system designed to provi
 
 RailSetu provides a complete platform for railway ticket reservation, passenger management, train management, booking management, and administrative operations.
 
-The frontend is built with React and TypeScript and is designed to integrate with a Node.js/Express backend and database layer.
+The frontend is built with React and TypeScript, while the backend is built with Node.js and Express.js.
+
+---
 
 ## ✨ Features
 
-### Passenger
+### 👤 Passenger
 
 * Railway/train search
 * Train details and route information
@@ -26,7 +28,7 @@ The frontend is built with React and TypeScript and is designed to integrate wit
 * Ticket/booking details
 * Profile management
 
-### Admin
+### 🛠️ Admin
 
 * Dashboard
 * Train management
@@ -38,24 +40,54 @@ The frontend is built with React and TypeScript and is designed to integrate wit
 * Reports
 * Audit logs
 
+---
+
 ## 🛠️ Tech Stack
 
-* **Frontend:** React + TypeScript
-* **Build Tool:** Vite
-* **Styling:** CSS / Tailwind CSS
-* **Routing:** React Router
-* **Icons:** Lucide
-* **Backend:** Node.js + Express.js *(planned)*
-* **Database:** PostgreSQL *(planned)*
+### Frontend
+
+* **React**
+* **TypeScript**
+* **Vite**
+* **CSS / Tailwind CSS**
+* **React Router**
+* **Lucide Icons**
+
+### Backend
+
+* **Node.js**
+* **Express.js**
+* **JWT Authentication**
+* **bcryptjs**
+
+### Database
+
+* PostgreSQL *(planned / depending on current configuration)*
+
+---
 
 ## 📁 Project Structure
 
 ```text
 RailSetu/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.js
+│   ├── package.json
+│   └── package-lock.json
+│
 ├── public/
 ├── src/
 │   ├── api/
+│   ├── assets/
 │   ├── components/
+│   │   ├── auth/
+│   │   ├── layout/
+│   │   └── ui/
 │   ├── context/
 │   ├── data/
 │   ├── layouts/
@@ -68,14 +100,19 @@ RailSetu/
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── router.tsx
+│
 ├── package.json
+├── package-lock.json
 ├── vite.config.ts
+├── tsconfig.json
 └── README.md
 ```
 
-## ▶️ Running the Frontend
+---
 
-Clone the repository:
+# ▶️ How to Run the Project
+
+## 1. Clone the Repository
 
 ```bash
 git clone https://github.com/BROKEN0103/RailSetu.git
@@ -87,23 +124,176 @@ Navigate into the project:
 cd RailSetu
 ```
 
-Install dependencies:
+---
+
+## 2. Install Frontend Dependencies
+
+From the project root:
 
 ```bash
 npm install
 ```
 
-Start the development server:
+---
+
+## 3. Install Backend Dependencies
+
+Navigate to the backend:
+
+```bash
+cd backend
+```
+
+Install the backend dependencies:
+
+```bash
+npm install
+```
+
+Then return to the project root:
+
+```bash
+cd ..
+```
+
+---
+
+# 🔐 Environment Variables
+
+The backend uses environment variables for configuration.
+
+Create a `.env` file inside the `backend` directory:
+
+```text
+backend/
+└── .env
+```
+
+Add the required environment variables according to your backend configuration.
+
+For example:
+
+```env
+PORT=5000
+JWT_SECRET=your_secret_key
+```
+
+> Do not commit your `.env` file to GitHub if it contains passwords, API keys, database credentials, or other secrets.
+
+---
+
+# 🚀 Start the Application
+
+The frontend and backend should be run in **two separate terminals**.
+
+## Terminal 1 — Start Backend
+
+From the project root:
+
+```bash
+cd backend
+npm run dev
+```
+
+The backend will start using Nodemon.
+
+You should see output similar to:
+
+```text
+[nodemon] starting `node src/server.js`
+```
+
+---
+
+## Terminal 2 — Start Frontend
+
+Open another terminal and go to the project root:
+
+```bash
+cd RailSetu
+```
+
+Then run:
 
 ```bash
 npm run dev
 ```
 
-The application will then be available through the local development URL shown in the terminal.
+Vite will display the local development URL, usually something similar to:
 
-## 🔮 Future Development
+```text
+http://localhost:5173
+```
 
-The frontend will be integrated with the backend to provide:
+Open that URL in your browser.
+
+---
+
+# 🔄 Running Both Servers
+
+You need both servers running at the same time:
+
+```text
+Terminal 1
+──────────────
+cd backend
+npm run dev
+
+        ↓
+
+Backend
+http://localhost:5000
+```
+
+and:
+
+```text
+Terminal 2
+──────────────
+npm run dev
+
+        ↓
+
+Frontend
+http://localhost:5173
+```
+
+The frontend communicates with the backend through the configured API endpoints.
+
+---
+
+# 🧪 Development
+
+### Frontend
+
+```bash
+npm run dev
+```
+
+### Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+### Build Frontend
+
+```bash
+npm run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+---
+
+# 🔮 Future Development
+
+The project can be extended with:
 
 * User authentication and authorization
 * Train and station APIs
@@ -118,13 +308,26 @@ The frontend will be integrated with the backend to provide:
 * Administrative APIs
 * Reports and analytics
 
-## 📌 Project Status
+---
 
-**Frontend:** Completed
-**Backend:** Under development
-**Database:** Planned
-**API Integration:** Planned
+# 📌 Project Status
 
-## 👨‍💻 Author
+| Component       | Status                      |
+| --------------- | --------------------------- |
+| Frontend        | ✅ Completed                 |
+| Backend         | 🚧 Under Development        |
+| Database        | 🚧 Planned / In Development |
+| API Integration | 🚧 In Development           |
+| Authentication  | 🚧 In Development           |
+
+---
+
+# 👨‍💻 Author
 
 **BROKEN0103**
+
+---
+
+## 📄 License
+
+This project is developed for educational and development purposes.
