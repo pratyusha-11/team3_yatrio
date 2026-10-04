@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --default-font-family: var(--font-display);
+
+  /* core brand colors */
+  --color-ink: #071426;
+  --color-navy: #04275b;
+  --color-royal: #014ca9;
+  --color-azure: #0080f8;
+  --color-sky: #3bb3fd;
+  --color-fog: #e9eef4;
+  --color-paper: #f7f9fc;
+  --color-ink-soft: #5e7086;
+  --color-body: #20303f;
+  --color-label: #8292a5;
+
+  /* extended ramp */
+  --color-navy-950: #021b40;
+  --color-navy-700: #0b3a7a;
+  --color-sky-200: #a9defc;
+  --color-sky-bright: #7cc8fe;
+  --color-blue-100: #e6f4ff;
+
+  /* dark surfaces */
+  --color-char: #0b0f14;
+  --color-panel: #0e1621;
+  --color-panel-line: #ffffff1a;
+  --color-panel-line-strong: #ffffff2b;
+
+  /* light surfaces */
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f2f6fa;
+  --color-surface-chrome: #eef2f7;
+
+  /* lines & dividers */
+  --color-line: #e4eaf1;
+  --color-line-mid: #d5dde6;
+  --color-line-strong: #8292a5;
+
+  /* on-dark typography */
+  --color-on-dark: #e8eef5;
+  --color-on-dark-soft: #93a6ba;
+  --color-on-dark-label: #8a99a8;
+
+  /* status colors - semantic only */
+  --color-status-success: #28c840;
+  --color-status-warning: #febc2e;
+  --color-status-error: #ff5f57;
+  --color-success-strong: #0b7a1e;
+  --color-warning-strong: #8a5e00;
+  --color-error-strong: #c43d36;
+
+  /* backward-compatible aliases */
+  --color-primary: #04275b;
+  --color-primary-dark: #071426;
+  --color-primary-light: #014ca9;
+  --color-secondary: #014ca9;
+  --color-secondary-light: #0080f8;
+  --color-accent: #0080f8;
+  --color-accent-light: #3bb3fd;
+  --color-background: #f7f9fc;
+  --color-foreground: #071426;
+  --color-muted: #5e7086;
+  --color-muted-foreground: #8292a5;
+  --color-border: #d5dde6;
+  --color-success: #28c840;
+  --color-warning: #febc2e;
+  --color-error: #c43d36;
+
+  /* type scale */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.5rem;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.75rem;
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.75rem;
+  --text-h3: 1.75rem;
+  --text-h3--line-height: 2.125rem;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: 2.5rem;
+  --text-display: 3rem;
+  --text-display--line-height: 3.25rem;
+
+  /* radii */
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+  --radius-modal: 1rem;
+  --radius-ticket: 1rem;
+
+  /* elevation */
+  --shadow-button: 0 10px 22px -8px rgb(1 76 169 / 0.45);
+  --shadow-card: 0 2px 10px -4px rgb(7 20 38 / 0.10);
+  --shadow-raised: 0 12px 28px -12px rgb(7 20 38 / 0.22);
+  --shadow-panel: 0 22px 50px -18px rgb(0 20 50 / 0.35);
+  --shadow-pop: 0 28px 60px -20px rgb(0 10 30 / 0.50);
+  --shadow-ticket: 0 4px 24px -8px rgb(7 20 38 / 0.18), 0 0 0 1px rgb(7 20 38 / 0.04);
+
+  /* containers */
+  --container-content: 1200px;
+  --container-form: 480px;
+  --container-prose: 68ch;
+
+  /* motion */
+  --ease-brand: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --animate-fade-up: fade-up 0.5s var(--ease-brand) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 12px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes shimmer {
+  from { background-position: -180% 0; }
+  to   { background-position: 180% 0; }
+}
+
+/* Tabular lining numerals */
+@utility num {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* The blueprint grid - dark surfaces */
+@utility blueprint {
+  background-image:
+    linear-gradient(rgb(59 179 253 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(59 179 253 / 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* The blueprint grid - light surfaces */
+@utility blueprint-light {
+  background-image:
+    linear-gradient(rgb(1 76 169 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(1 76 169 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-body);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-line-mid);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ink-soft);
+}
