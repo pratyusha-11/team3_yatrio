@@ -5,7 +5,17 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "test": "node tests/payment.test.js",
+    "test:db": "node tests/db.test.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:migrate:undo:all": "sequelize-cli db:migrate:undo:all",
+    "db:migrate:status": "sequelize-cli db:migrate:status",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:seed:undo": "sequelize-cli db:seed:undo:all",
+    "db:reset": "npm run db:seed:undo && npm run db:migrate:undo:all && npm run db:migrate && npm run db:seed",
+    "db:shell": "node scripts/db-shell.js"
   },
   "keywords": [],
   "author": "",
@@ -21,9 +31,12 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.12.1",
     "mysql2": "^3.24.4",
-    "rate-limit-redis": "^6.0.1"
+    "razorpay": "^2.9.8",
+    "rate-limit-redis": "^6.0.1",
+    "sequelize": "^6.37.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "sequelize-cli": "^6.6.5"
   }
 }

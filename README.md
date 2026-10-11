@@ -62,7 +62,13 @@ The frontend is built with React and TypeScript, while the backend is built with
 
 ### Database
 
-* PostgreSQL *(planned / depending on current configuration)*
+* **MySQL** — one database, `schema defaultdb`, shared by all seven teams.
+  * **Hosted:** Aiven MySQL 8.4 for Team 5's payment schema.
+  * **Local:** `yatrio_db`, created by `backend/src/scripts/runMigrations.js`.
+  * Connect, browse, and see which team owns which table:
+    [`backend/database/README.md`](backend/database/README.md)
+  * Team 5's payment schema in detail, with an ER diagram:
+    [`PAYMENTS.md`](PAYMENTS.md) §12
 
 ---
 
@@ -72,11 +78,17 @@ The frontend is built with React and TypeScript, while the backend is built with
 RailSetu/
 ├── backend/
 │   ├── src/
+│   │   ├── config/
 │   │   ├── controllers/
 │   │   ├── middleware/
+│   │   ├── models/
 │   │   ├── routes/
 │   │   ├── services/
+│   │   ├── utils/
 │   │   └── server.js
+│   ├── database/          # Team 5 — Sequelize migrations, seeders, SQL, certs
+│   ├── migrations/        # raw SQL, applied by runMigrations.js
+│   ├── tests/
 │   ├── package.json
 │   └── package-lock.json
 │
