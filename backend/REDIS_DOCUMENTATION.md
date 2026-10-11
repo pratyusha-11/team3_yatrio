@@ -40,7 +40,7 @@ flowchart TD
     QUERY --> SET["write back with the key's TTL"]
     SET --> RESP["JSON response"]
 
-    AUTH["/api/v1/auth"] --> AUTHLIM["authLimiter<br/>20 req / 1 hour"]
+    AUTH["/auth"] --> AUTHLIM["authLimiter<br/>20 req / 1 hour"]
     AUTHLIM --> ROUTE
 
     REDIS[("Redis<br/>127.0.0.1:6379")]
