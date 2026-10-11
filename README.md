@@ -476,6 +476,7 @@ Build settings in the Cloudflare dashboard:
 | Root directory | `Frontend` |
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
+| Preview command | `npx wrangler preview` (default) |
 | Node version | 18 or newer |
 
 > `"name"` must match the Worker's name on the dashboard (`yatrio`) exactly, or
@@ -506,6 +507,36 @@ the build runs — changing them afterwards has no effect until a rebuild.
 > If you ever deploy the frontend somewhere else, the equivalent is "rewrite
 > all unmatched paths to `/index.html`". On Cloudflare **Pages** that is the
 > `public/_redirects` file syntax, which is why it is not used here.
+
+### Preview deployments
+
+Every branch that is not your production branch gets its own isolated Preview,
+served on its own URL under the same Worker. The enabling config is one line:
+
+```jsonc
+"previews": {}
+```
+
+An empty object is correct and intentional here. The `previews` block is
+*required* for Worker Previews, but this Worker is assets-only — it has no
+bindings, vars, or Worker script, so there is nothing to override.
+
+Two rules worth knowing:
+
+- **`assets` must stay at the top level**, never inside `previews`.
+  `wrangler preview` uploads assets from the branch being previewed.
+- **Do not put `VITE_*` in the `previews` block.** Vite inlines those at build
+  time, and an assets-only Worker has no runtime to read `env` from. Preview
+  builds need `VITE_API_URL` set as a build environment variable in the
+  dashboard, just like production builds do.
+
+Requires wrangler **4.135.0+**. The build fetches wrangler via `npx`, so it is
+already current; if you later add it as a local dev dependency, pin `>=4.135.0`.
+
+Each Preview gets a **Preview URL** (always the latest deploy) and a
+**Deployment URL** per deploy (immutable, for comparing exact versions).
+`workers.dev` Preview URLs carry `X-Robots-Tag: noindex`, so they will not be
+indexed by search engines.
 
 ### Deploying the backend
 
