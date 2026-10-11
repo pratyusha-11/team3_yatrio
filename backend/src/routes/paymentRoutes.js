@@ -15,7 +15,7 @@ const router = express.Router()
  *   GET  /history           transaction history, filterable and paginated
  *   GET  /status/:orderId   poll order status
  *
- * Mounted at /api/v1/payments.
+ * Mounted at /payments.
  */
 
 router.post('/create-order', asyncHandler(ctrl.createOrder))

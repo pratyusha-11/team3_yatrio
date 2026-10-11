@@ -1,4 +1,17 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+/**
+ * The API's base URL — origin only, no path prefix.
+ *
+ * Read once, here, and imported everywhere else so there is exactly one place
+ * that decides where the backend lives. There is deliberately no dev proxy in
+ * vite.config.js: a proxy exists only in `vite dev`, so a production build
+ * would send relative requests to the static host and 404.
+ *
+ * Set VITE_API_URL per environment, e.g.
+ *   local      http://localhost:5000
+ *   deployed   https://api.yatrio.example.com
+ */
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export class ApiError extends Error {
     status;
     message;
