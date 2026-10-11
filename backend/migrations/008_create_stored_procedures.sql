@@ -1,0 +1,145 @@
+-- 008_create_stored_procedures.sql
+-- Stored procedures for searching stations and searching trains between stations
+
+DROP PROCEDURE IF EXISTS search_stations;
+DELIMITER $$
+CREATE PROCEDURE search_stations(
+    IN p_search VARCHAR(100),
+    IN p_limit INT,
+    IN p_offset INT
+)
+BEGIN
+    DECLARE v_limit INT DEFAULT 20;
+    DECLARE v_offset INT DEFAULT 0;
+
+    IF p_limit IS NOT NULL AND p_limit > 0 THEN
+        SET v_limit = p_limit;
+    END IF;
+    IF p_offset IS NOT NULL AND p_offset >= 0 THEN
+        SET v_offset = p_offset;
+    END IF;
+
+    SELECT 
+        id,
+        station_code,
+        station_name,
+        city,
+        state,
+        timezone,
+        status
+    FROM stations
+    WHERE status = 'active'
+      AND (
+          p_search IS NULL 
+          OR p_search = '' 
+          OR station_code LIKE CONCAT('%', p_search, '%')
+          OR station_name LIKE CONCAT('%', p_search, '%')
+          OR city LIKE CONCAT('%', p_search, '%')
+      )
+    ORDER BY 
+        CASE 
+            WHEN p_search IS NULL OR p_search = '' THEN 3
+            WHEN station_code = UPPER(p_search) THEN 0
+            WHEN station_code LIKE CONCAT(UPPER(p_search), '%') THEN 1
+            WHEN station_name LIKE CONCAT(p_search, '%') THEN 2
+            ELSE 3
+        END,
+        station_name ASC
+    LIMIT v_limit OFFSET v_offset;
+END$$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS search_trains_between_stations;
+DELIMITER $$
+CREATE PROCEDURE search_trains_between_stations(
+    IN p_from_code VARCHAR(10),
+    IN p_to_code VARCHAR(10),
+    IN p_journey_date DATE
+)
+BEGIN
+    DECLARE v_day_of_week VARCHAR(3);
+
+    -- Format journey date to 3-letter uppercase day ('MON', 'TUE', etc.)
+    SET v_day_of_week = UPPER(DATE_FORMAT(p_journey_date, '%a'));
+
+    SELECT 
+        t.id AS train_id,
+        t.train_number,
+        t.train_name,
+        t.train_type,
+        t.status AS train_status,
+        t.pantry_available,
+        s_from.station_code AS from_station_code,
+        s_from.station_name AS from_station_name,
+        TIME_FORMAT(r_from.departure_time, '%H:%i') AS departure_time,
+        r_from.platform AS departure_platform,
+        s_to.station_code AS to_station_code,
+        s_to.station_name AS to_station_name,
+        TIME_FORMAT(r_to.arrival_time, '%H:%i') AS arrival_time,
+        r_to.platform AS arrival_platform,
+        (r_to.distance_km - r_from.distance_km) AS travel_distance_km,
+        (r_to.day_offset - r_from.day_offset) AS day_difference,
+        -- Duration calculation formatted as Xh Ym
+        CONCAT(
+            FLOOR(
+                TIMESTAMPDIFF(
+                    MINUTE, 
+                    TIMESTAMP(p_journey_date, r_from.departure_time),
+                    TIMESTAMP(DATE_ADD(p_journey_date, INTERVAL (r_to.day_offset - r_from.day_offset) DAY), r_to.arrival_time)
+                ) / 60
+            ),
+            'h ',
+            LPAD(
+                MOD(
+                    TIMESTAMPDIFF(
+                        MINUTE, 
+                        TIMESTAMP(p_journey_date, r_from.departure_time),
+                        TIMESTAMP(DATE_ADD(p_journey_date, INTERVAL (r_to.day_offset - r_from.day_offset) DAY), r_to.arrival_time)
+                    ),
+                    60
+                ),
+                2,
+                '0'
+            ),
+            'm'
+        ) AS duration,
+        (r_to.stop_sequence - r_from.stop_sequence) AS intermediate_stops_count,
+        -- Group concatenated running days
+        (
+            SELECT GROUP_CONCAT(trd.day_of_week ORDER BY FIELD(trd.day_of_week, 'MON','TUE','WED','THU','FRI','SAT','SUN') SEPARATOR ',')
+            FROM train_running_days trd
+            WHERE trd.train_id = t.id
+        ) AS running_days,
+        -- JSON array of available classes
+        (
+            SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'classCode', tc.class_code,
+                    'className', tc.class_name,
+                    'fare', tc.base_fare,
+                    'availableSeats', tc.available_seats,
+                    'totalSeats', tc.total_seats,
+                    'status', CASE WHEN tc.available_seats > 10 THEN 'AVAILABLE' WHEN tc.available_seats > 0 THEN 'RAC' ELSE 'WAITING' END
+                )
+            )
+            FROM train_classes tc
+            WHERE tc.train_id = t.id
+        ) AS classes_json
+    FROM trains t
+    INNER JOIN stations s_from ON s_from.station_code = UPPER(p_from_code)
+    INNER JOIN stations s_to ON s_to.station_code = UPPER(p_to_code)
+    INNER JOIN train_routes r_from ON r_from.train_id = t.id AND r_from.station_id = s_from.id
+    INNER JOIN train_routes r_to ON r_to.train_id = t.id AND r_to.station_id = s_to.id
+    WHERE t.status = 'active'
+      -- Source station must be before destination station on route
+      AND r_from.stop_sequence < r_to.stop_sequence
+      -- Train must run on the selected journey day of week
+      AND EXISTS (
+          SELECT 1 
+          FROM train_running_days rd 
+          WHERE rd.train_id = t.id 
+            AND rd.day_of_week = v_day_of_week
+      )
+    ORDER BY r_from.departure_time ASC;
+END$$
+DELIMITER ;
