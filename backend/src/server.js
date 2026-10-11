@@ -10,6 +10,8 @@ const userRoutes = require('./routes/userRoutes');
 const stationRoutes = require('./routes/stationRoutes');
 const trainRoutes = require('./routes/trainRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const env = require('./config/env');
 const adminMiddleware = require('./middleware/adminMiddleware');
 const authMiddleware = require('./middleware/authMiddleware');
 
@@ -35,6 +37,29 @@ app.use('/stations', stationRoutes);
 app.use('/api/v1/trains', trainRoutes);
 app.use('/trains', trainRoutes);
 
+// Team 5 - Payment & Transactions
+app.use('/api/v1/payments', paymentRoutes);
+
+// Service health. Reports whether the database is reachable and whether
+// payment is configured, without revealing credentials.
+app.get('/api/v1/health', async (req, res) => {
+  const health = {
+    status: 'ok',
+    razorpay: env.isMockRazorpay ? 'unconfigured' : 'configured',
+    database: 'unknown',
+  };
+
+  try {
+    const [rows] = await pool.query('SELECT 1 AS ok');
+    health.database = rows[0].ok === 1 ? 'connected' : 'unreachable';
+  } catch (err) {
+    health.status = 'degraded';
+    health.database = 'unreachable';
+  }
+
+  res.json(health);
+});
+
 app.get('/', (req, res) => {
   res.json({
     message: 'RailSetu / Yatrio Backend is Running!',
@@ -44,6 +69,13 @@ app.get('/', (req, res) => {
       'GET /trains/search?q=:query',
       'GET /trains/between?from=:from&to=:to&date=:date',
       'GET /trains/:trainNo',
+    ],
+    team5Endpoints: [
+      'POST /api/v1/payments/create-order',
+      'POST /api/v1/payments/verify',
+      'POST /api/v1/payments/refund',
+      'GET /api/v1/payments/status/:orderId',
+      'GET /api/v1/payments/history',
     ],
   });
 });
@@ -60,15 +92,28 @@ app.use((req, res) => {
 });
 
 // Global error handler
+//
+// Team 5's payment routes reject with an HttpError carrying a deliberate
+// status and code (404 NOT_FOUND, 409 SIGNATURE_MISMATCH, 409 ALREADY_REFUNDED),
+// so honour them instead of flattening everything to a 500. Anything without a
+// status is a genuine fault and still gets the generic message, because a 500
+// must never leak internals to a client.
 app.use((err, req, res, next) => {
-  console.error('Unhandled server error:', err);
-  res.status(500).json({
+  const status = err.status || err.statusCode || 500;
+
+  if (status >= 500) {
+    console.error('Unhandled server error:', err);
+  }
+
+  res.status(status).json({
     success: false,
     error: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected internal error occurred',
+      code: status >= 500 ? 'INTERNAL_ERROR' : err.code || 'REQUEST_FAILED',
+      message:
+        status >= 500 ? 'An unexpected internal error occurred' : err.message,
+      field: err.field ?? null,
     },
-  });
+});
 });
 
 const PORT = process.env.PORT || 5000;

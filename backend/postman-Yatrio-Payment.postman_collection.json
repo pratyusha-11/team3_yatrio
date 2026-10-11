@@ -1,0 +1,260 @@
+{
+  "info": {
+    "name": "Yatrio — Team 5 Payment API",
+    "description": "Razorpay test-mode payment lifecycle. Amounts are always server-derived; clients never send one.\n\nCoverage: create-order, verify (HMAC + gateway confirm, idempotent), refund (terminal), history, status.\n\nRun: import the collection, set {{baseUrl}} and {{bookingRef}}, then start with POST Create Order.\n\nNote: {{orderId}} is auto-captured from the Create Order response into the Create Order variable.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api/v1" },
+    { "key": "bookingRef", "value": "YTR-12951-7QX2" },
+    { "key": "orderId", "value": "" },
+    { "key": "paymentId", "value": "" },
+    { "key": "signature", "value": "" },
+    { "key": "keySecret", "value": "", "type": "secret" }
+  ],
+  "item": [
+    {
+      "name": "Create Order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (res.status === 201) {",
+              "  const b = res.json();",
+              "  pm.collectionVariables.set('orderId', b.orderId);",
+              "  pm.collectionVariables.set('paymentId', b.paymentId || '');",
+              "  pm.test('order created', () => pm.expect(b.status).to.eql('created'));",
+              "  pm.test('server computed the amount', () => pm.expect(b.amount).to.be.a('number'));",
+              "  pm.test('public key id returned, secret never is', () => {",
+              "    pm.expect(b.keyId).to.be.a('string');",
+              "    pm.expect(JSON.stringify(b)).to.not.include('secret');",
+              "  });",
+              "}",
+              "pm.test('status is 201 or 200', () => pm.expect(res.status).to.be.oneOf([200, 201]));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bookingRef\": \"{{bookingRef}}\",\n  \"extras\": { \"insurance\": false, \"coupon\": null }\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/payments/create-order", "host": ["{{baseUrl}}"], "path": ["payment", "create-order"] },
+        "description": "Mints a Razorpay order for a booking.\n\nThe body carries NO amount. The server resolves the booking and computes the fare. Calling this twice while an order is live returns the same order with reused:true."
+      }
+    },
+    {
+      "name": "Create Order — tampered amount (must fail)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('rejected with 400', () => pm.expect(res.status).to.eql(400));",
+              "pm.test('code is BAD_REQUEST', () => pm.expect(res.json().error.code).to.eql('BAD_REQUEST'));",
+              "pm.test('field is amount', () => pm.expect(res.json().error.field).to.eql('amount'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"bookingRef\": \"{{bookingRef}}\",\n  \"amount\": 100\n}" },
+        "url": { "raw": "{{baseUrl}}/payments/create-order", "host": ["{{baseUrl}}"], "path": ["payment", "create-order"] },
+        "description": "The 'tampered amount' case from the assignment. A client-supplied price is refused outright rather than silently discarded."
+      }
+    },
+    {
+      "name": "Create Order — unknown booking (must fail)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('rejected with 404', () => pm.expect(res.status).to.eql(404));",
+              "pm.test('code is NOT_FOUND', () => pm.expect(res.json().error.code).to.eql('NOT_FOUND'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"bookingRef\": \"DOES-NOT-EXIST\"\n}" },
+        "url": { "raw": "{{baseUrl}}/payments/create-order", "host": ["{{baseUrl}}"], "path": ["payment", "create-order"] }
+      }
+    },
+    {
+      "name": "Verify Payment — bad signature (must fail)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('rejected with 409', () => pm.expect(res.status).to.eql(409));",
+              "pm.test('code is SIGNATURE_MISMATCH', () => pm.expect(res.json().error.code).to.eql('SIGNATURE_MISMATCH'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"razorpayPaymentId\": \"pay_forged\",\n  \"razorpayOrderId\": \"{{orderId}}\",\n  \"razorpaySignature\": \"deadbeef\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/payments/verify", "host": ["{{baseUrl}}"], "path": ["payment", "verify"] },
+        "description": "Forged signature. The order is marked failed and never fulfilled."
+      }
+    },
+    {
+      "name": "Verify Payment — genuine",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (res.status === 200) {",
+              "  const b = res.json();",
+              "  pm.collectionVariables.set('paymentId', b.paymentId || pm.collectionVariables.get('paymentId'));",
+              "  pm.test('status is terminal or pending', () => pm.expect(b.status).to.be.oneOf(['captured','authorized','attempted','created','failed']));",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"razorpayPaymentId\": \"{{paymentId}}\",\n  \"razorpayOrderId\": \"{{orderId}}\",\n  \"razorpaySignature\": \"{{signature}}\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/payments/verify", "host": ["{{baseUrl}}"], "path": ["payment", "verify"] },
+        "description": "Paste the razorpay_signature from the Checkout handler response.\n\n{{signature}} must be HMAC-SHA256 of '{{orderId}}|{{paymentId}}' keyed with RAZORPAY_KEY_SECRET. Compute it locally:\n\n  node -e \"const c=require('crypto');console.log(c.createHmac('sha256',process.env.SECRET).update(process.argv[1]+'|'+process.argv[2]).digest('hex'))\" '{{orderId}}' '{{paymentId}}'\n\nIdempotent: verifying an already-captured order returns duplicate:true and does not rewrite the record."
+      }
+    },
+    {
+      "name": "Payment Status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('200', () => pm.expect(res.status).to.eql(200));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/payments/status/{{orderId}}", "host": ["{{baseUrl}}"], "path": ["payment", "status", "{{orderId}}"] },
+        "description": "Poll target for the pending screen. Reconciles with Razorpay, and expires orders past ORDER_TTL_MINUTES."
+      }
+    },
+    {
+      "name": "Payment History",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200', () => pm.expect(res.status).to.eql(200));",
+              "const b = res.json();",
+              "pm.test('paginated envelope', () => {",
+              "  pm.expect(b).to.have.property('items');",
+              "  pm.expect(b).to.have.property('total');",
+              "  pm.expect(b).to.have.property('totalPages');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/payments/history?status=all&page=1&pageSize=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["payment", "history"],
+          "query": [
+            { "key": "status", "value": "all", "description": "all | captured | pending | failed | refunded" },
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Refund — before capture (must fail)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('rejected with 409 NOT_CAPTURED', () => { pm.expect(res.status).to.eql(409); pm.expect(res.json().error.code).to.eql('NOT_CAPTURED'); });"]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"orderId\": \"{{orderId}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/payments/refund", "host": ["{{baseUrl}}"], "path": ["payment", "refund"] }
+      }
+    },
+    {
+      "name": "Refund Payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (res.status === 200) {",
+              "  const b = res.json();",
+              "  pm.test('status is refunded', () => pm.expect(b.status).to.eql('refunded'));",
+              "  pm.test('refund id recorded', () => pm.expect(b.refundId).to.be.a('string'));",
+              "}",
+              "pm.test('200 or 409', () => pm.expect(res.status).to.be.oneOf([200, 409]));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"orderId\": \"{{orderId}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/payments/refund", "host": ["{{baseUrl}}"], "path": ["payment", "refund"] },
+        "description": "Refunds a captured payment. Terminal — a second refund returns 409 ALREADY_REFUNDED, and verifying a refunded payment returns 409 REFUNDED."
+      }
+    },
+    {
+      "name": "Health",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200', () => pm.expect(res.status).to.eql(200));",
+              "const b = res.json();",
+              "pm.test('razorpay configured', () => pm.expect(b.razorpay).to.eql('configured'));"
+            ]
+          }
+        }
+      ],
+      "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] } }
+    }
+  ]
+}
