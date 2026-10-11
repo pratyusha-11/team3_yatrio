@@ -223,8 +223,8 @@ flowchart TD
     NEXT --> M1["database/migrations/0001..0008"]
     M1 --> OK["one schema, one connection layer"]
 
-    classDef raw fill:#fee,stroke:#a33
-    classDef seq fill:#efe,stroke:#474
+    classDef raw fill:#fee,stroke:#a33,color:#1f2933
+    classDef seq fill:#efe,stroke:#474,color:#1f2933
     class RAW,CDB,SCAN,STRIP,RUN raw
     class NEXT,M1,OK seq
 ```

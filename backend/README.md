@@ -41,8 +41,8 @@ flowchart TD
 
     RESP -.->|"handler throws"| ERR["global error handler<br/>honours err.status"]
 
-    classDef guard fill:#fee,stroke:#a33
-    classDef store fill:#efe,stroke:#474
+    classDef guard fill:#fee,stroke:#a33,color:#1f2933
+    classDef store fill:#efe,stroke:#474,color:#1f2933
     class LIMIT,GUARD,DBQ guard
     class NF,ERR store
 ```
@@ -82,7 +82,7 @@ flowchart LR
 
     T1 & T2 & T5 & T7 --> ADAPTER --> BASE
 
-    classDef shared fill:#eef,stroke:#557
+    classDef shared fill:#eef,stroke:#557,color:#1f2933
     class BASE,ADAPTER shared
 ```
 

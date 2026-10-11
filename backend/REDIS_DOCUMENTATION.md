@@ -48,8 +48,8 @@ flowchart TD
     LOOKUP -.-> REDIS
     AUTHLIM -.-> REDIS
 
-    classDef opt fill:#eef,stroke:#557
-    classDef fail fill:#fee,stroke:#a33
+    classDef opt fill:#eef,stroke:#557,color:#1f2933
+    classDef fail fill:#fee,stroke:#a33,color:#1f2933
     class REDIS opt
     class BLOCK fail
 ```

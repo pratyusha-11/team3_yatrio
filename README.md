@@ -65,8 +65,8 @@ flowchart LR
     PAY <--> RZ
     API -.-> RDS
 
-    classDef ext fill:#eef,stroke:#557
-    classDef db fill:#efe,stroke:#474
+    classDef ext fill:#eef,stroke:#557,color:#1f2933
+    classDef db fill:#efe,stroke:#474,color:#1f2933
     class RAIL,RZ,RDS ext
     class DB db
 ```
