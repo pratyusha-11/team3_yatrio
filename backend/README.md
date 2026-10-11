@@ -15,6 +15,80 @@ Teams 3, 4 and 6 have not landed their API work yet. The payment module depends
 on Team 4's booking service; until it exists, `src/services/payment/bookingService.js`
 serves two seeded bookings from memory.
 
+## How a request is served
+
+```mermaid
+flowchart TD
+    REQ["HTTP request"] --> CORS["cors"]
+    CORS --> JSON["express.json"]
+    JSON --> LOG["requestLoggerMiddleware"]
+    LOG --> LIMIT["apiLimiter<br/>express-rate-limit + Redis"]
+    LIMIT --> MOUNT{"mounted path"}
+
+    MOUNT -->|"/api/v1/auth"| AUTHM["authLimiter<br/>then authRoutes"]
+    MOUNT -->|"/api/v1/users"| USER["userRoutes"]
+    MOUNT -->|"/api/v1/admin"| GUARD["authMiddleware<br/>adminMiddleware"]
+    MOUNT -->|"/api/v1/stations<br/>/api/v1/trains"| SEARCH["stationRoutes<br/>trainRoutes"]
+    MOUNT -->|"/api/v1/payments"| PAY["paymentRoutes"]
+    MOUNT -->|"/api/v1/health"| HEALTH["health"]
+
+    AUTHM & USER & GUARD & SEARCH & PAY & HEALTH --> ROUTE["controller"]
+    ROUTE --> DBQ["db.query — Sequelize"]
+
+    DBQ --> RESP["JSON response"]
+
+    MOUNT -.->|no match| NF["404 ROUTE_NOT_FOUND"]
+
+    RESP -.->|"handler throws"| ERR["global error handler<br/>honours err.status"]
+
+    classDef guard fill:#fee,stroke:#a33
+    classDef store fill:#efe,stroke:#474
+    class LIMIT,GUARD,DBQ guard
+    class NF,ERR store
+```
+
+The payment controller is the only one that throws deliberately. It rejects with
+an `HttpError` carrying a real status and code — `404 NOT_FOUND`, `409
+SIGNATURE_MISMATCH`, `409 ALREADY_REFUNDED` — and the global handler honours it
+rather than flattening everything into a 500.
+
+## Ownership map
+
+```mermaid
+flowchart LR
+    subgraph T1["Team 1 · Auth"]
+        AC["authController"]
+        UC["userRoutes"]
+    end
+    subgraph T2["Team 2 · Search"]
+        SC["stationController"]
+        TC["trainController"]
+        RS["services/railway"]
+    end
+    subgraph T5["Team 5 · Payment"]
+        PC["paymentController"]
+        PS["services/payment"]
+        PM["models"]
+    end
+    subgraph T7["Team 7 · Admin"]
+        ADC["adminController"]
+        ANC["analyticsController"]
+        RPC["reportController"]
+        MNC["monitoringController"]
+    end
+
+    BASE["src/config/database.js<br/>one Sequelize instance<br/>for everyone"]
+    ADAPTER["src/config/db.js<br/>mysql2-shaped query surface"]
+
+    T1 & T2 & T5 & T7 --> ADAPTER --> BASE
+
+    classDef shared fill:#eef,stroke:#557
+    class BASE,ADAPTER shared
+```
+
+Teams 3, 4 and 6 have no API surface here yet. Team 4's `bookings` tables are
+the missing piece that the payment module is written against.
+
 ## Running it
 
 ```bash

@@ -282,6 +282,45 @@ Order lifecycle from Razorpay, mirrored onto our record:
 | `failed` | declined or expired | **yes** | `/failure` |
 | `refunded` | reversed | **yes** | `/success` (refunded) |
 
+```mermaid
+stateDiagram-v2
+    [*] --> created : POST /create-order
+    created --> attempted : Checkout.js opens
+    attempted --> authorized : bank approves, not settled
+    attempted --> captured : signature verifies + gateway confirms
+    attempted --> failed : declined, or signature invalid
+    authorized --> captured : gateway settles
+    authorized --> failed : expires past ORDER_TTL_MINUTES
+    created --> failed : expires past ORDER_TTL_MINUTES
+    captured --> refunded : POST /refund
+
+    failed --> [*]
+    refunded --> [*]
+    captured --> [*] : terminal for booking purposes
+
+    note right of captured
+        A captured payment is final.
+        Only refund may follow, and only
+        once — see ALREADY_REFUNDED.
+    end note
+
+    note right of failed
+        A retry mints a NEW order rather
+        than reopening this one, capped at
+        MAX_PAYMENT_ATTEMPTS.
+    end note
+```
+
+The two guards on this graph are not only in the controller:
+
+- `trg_payments_status_guard` refuses any UPDATE that moves a payment out of a
+  terminal state, except `captured → refunded`.
+- `confirm_payment()` never captures on a signature that did not verify — it
+  records `SIGNATURE_MISMATCH` and fails the payment instead.
+
+So the "a captured payment is final" rule holds even for a writer that is not
+the payment service.
+
 ---
 
 ## 6. Frontend routes

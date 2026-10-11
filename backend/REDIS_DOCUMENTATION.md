@@ -22,6 +22,42 @@ REDIS_DB=0
 ## Backward Compatibility (Team 2)
 The original in-memory `cacheService.js` created by Team 2 has been swapped for a Redis-backed `CacheService` class, exposing the same API methods (`get`, `set`, `del`, `flush`, `size`). These methods are now asynchronous. Team 2's `railwayService.js` was safely updated to `await` the responses.
 
+## Where Redis sits in the request path
+
+Redis is optional. When it is unreachable the API degrades rather than failing:
+cache reads miss and fall through to MySQL, and the rate limiter falls back to
+in-memory counting. Every request below still succeeds, just uncached.
+
+```mermaid
+flowchart TD
+    REQ["request"] --> LIMIT["apiLimiter<br/>express-rate-limit + rate-limit-redis"]
+    LIMIT -->|"under 100 req / 15 min"| ROUTE["route handler"]
+    LIMIT -->|"over the limit"| BLOCK["429 Too Many Requests"]
+
+    ROUTE --> LOOKUP{"read-through<br/>cache key present?"}
+    LOOKUP -->|"hit"| HIT["return cached JSON"]
+    LOOKUP -->|"miss or Redis down"| QUERY["MySQL via Sequelize"]
+    QUERY --> SET["write back with the key's TTL"]
+    SET --> RESP["JSON response"]
+
+    AUTH["/api/v1/auth"] --> AUTHLIM["authLimiter<br/>20 req / 1 hour"]
+    AUTHLIM --> ROUTE
+
+    REDIS[("Redis<br/>127.0.0.1:6379")]
+    LIMIT -.-> REDIS
+    LOOKUP -.-> REDIS
+    AUTHLIM -.-> REDIS
+
+    classDef opt fill:#eef,stroke:#557
+    classDef fail fill:#fee,stroke:#a33
+    class REDIS opt
+    class BLOCK fail
+```
+
+Team 2's original in-memory `cacheService.js` was replaced by this Redis-backed
+one, with the same API (`get`, `set`, `del`, `flush`, `size`), now async —
+`railwayService.js` awaits the responses.
+
 ## Key and TTL Glossary
 Keys are structured using namespaces separated by colons.
 

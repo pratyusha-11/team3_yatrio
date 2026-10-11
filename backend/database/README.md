@@ -95,30 +95,146 @@ Seven teams, one schema. **Own your tables; leave everyone else's alone.**
 
 | Team | Module | Tables | Status |
 | --- | --- | --- | --- |
-| T1 | Auth | `users`, `roles`, `user_roles`, `user_sessions`, `password_resets` | not created yet |
-| T2 | Search | `stations`, `trains`, `train_routes`, `train_running_days`, `train_classes` | not created yet |
+| T1 | Auth | `users` | **created** |
+| T2 | Search | `stations`, `trains`, `train_routes`, `train_running_days`, `train_classes` | **created and seeded** |
 | T3 | Availability | `train_schedules`, `seat_classes`, `coaches`, `coach_seats`, `quotas`, `fares`, `availability_snapshots` | not created yet |
 | T4 | Booking | `bookings`, `booking_passengers`, `booking_segments`, `seat_allocations`, `booking_status`, `cancellations` | not created yet |
-| **T5** | **Payment** | **`payments`, `payment_transactions`, `refunds`, `payment_methods`** | **built and seeded** |
+| **T5** | **Payment** | **`payments`, `payment_transactions`, `refunds`, `payment_methods`** | **created and seeded** |
 | T6 | PNR / Live | `pnr_records`, `pnr_passengers`, `train_live_status`, `train_locations`, `train_status_history` | not created yet |
-| T7 | Admin / Audit | `audit_logs`, `api_request_logs` | not created yet |
+| T7 | Admin / Audit | `audit_logs`, `api_request_logs`, `railway_audit_logs` | **created** |
+
+Teams 1, 2, 5 and 7 have landed their schema. Teams 3, 4 and 6 have not — and
+Team 4's `bookings` is the one that matters to others, because
+`payments.booking_id` is indexed and **waiting** for it.
+[`PAYMENTS.md`](../../PAYMENTS.md) §12.8 has the `ALTER TABLE` that closes that
+loop.
+
+### Everything in the schema
+
+```mermaid
+erDiagram
+    users {
+        int id PK
+        varchar email UK
+        varchar full_name
+        enum role
+    }
+    stations {
+        int id PK
+        varchar station_code UK
+        varchar station_name
+        varchar city
+    }
+    trains {
+        int id PK
+        varchar train_number UK
+        varchar train_name
+    }
+    train_routes {
+        int id PK
+        int train_id FK
+        int station_id FK
+        int stop_sequence
+    }
+    train_running_days {
+        int id PK
+        int train_id FK
+        enum day
+    }
+    train_classes {
+        int id PK
+        int train_id FK
+        varchar class_code
+    }
+    bookings {
+        int id PK
+        int user_id FK
+        varchar booking_ref
+    }
+    payments {
+        bigint payment_id PK
+        int booking_id
+        varchar gateway_order_id UK
+        bigint amount
+        enum status
+    }
+    payment_transactions {
+        bigint transaction_id PK
+        bigint payment_id FK
+        varchar gateway_order_id UK
+        enum event
+    }
+    refunds {
+        bigint refund_id PK
+        bigint payment_id FK
+        varchar gateway_refund_id UK
+        bigint amount
+    }
+    payment_methods {
+        int payment_method_id PK
+        varchar code UK
+    }
+    audit_logs {
+        int id PK
+        varchar actor
+    }
+    api_request_logs {
+        int id PK
+        varchar endpoint
+    }
+
+    users ||--o{ bookings : "makes"
+    stations ||--o{ train_routes : "stop on"
+    trains ||--o{ train_routes : "runs via"
+    trains ||--o{ train_running_days : "operates"
+    trains ||--o{ train_classes : "offers"
+    bookings ||--o{ payments : "is paid by"
+    payments ||--o{ payment_transactions : "attempts"
+    payments ||--o{ refunds : "reversed by"
+    payments }o--o| payment_methods : "method_code"
+```
+
+`bookings` and `booking_passengers` are shown as Team 4 will create them; the
+dashed relationship to `payments` is the one still to be enforced.
 
 Also present, and not anybody's application data:
 
 | Object | What it is |
 | --- | --- |
-| `v_payment_history` | T5 read-only view: one row per payment, the shape the history endpoint returns. T7's reporting can build on it |
-| `create_payment_record`, `confirm_payment`, `process_refund` | T5 procedures. See [`../../PAYMENTS.md`](../../PAYMENTS.md) §12.5 |
-| `trg_payments_status_guard`, `trg_refunds_payment_guard` | T5 triggers. See §12.6 |
+| `v_payment_history` | T5 read-only view: one row per payment, the shape the history endpoint returns |
+| `vw_booking_summary`, `vw_revenue_summary`, `vw_train_occupancy`, `vw_user_activity` | T7 reporting views for the admin dashboard |
+| `create_payment_record`, `confirm_payment`, `process_refund` | T5 procedures — see [`PAYMENTS.md`](../../PAYMENTS.md) §12.5 |
+| `search_stations`, `search_trains_between_stations` | T2 procedures, called by the search endpoints |
+| `get_dashboard_statistics`, `get_daily_revenue`, `get_popular_routes`, `get_train_occupancy` | T7 procedures behind the analytics screens |
 | `sequelize_meta`, `sequelize_seeders` | Sequelize's own. They record which migrations and seeders have run |
 
-Team 5's tables are the only ones live, but the connections other teams need
-already exist — `payments.booking_id` is indexed and **waiting** for T4's
-`bookings` table, and [`PAYMENTS.md`](../../PAYMENTS.md) §12.8 has the `ALTER
-TABLE` that closes the loop when it lands.
+### How the schema gets built
 
-The four live tables as an ER diagram — every column, key and relationship — is
-in [`PAYMENTS.md`](../../PAYMENTS.md) §12.3.
+Two migration systems, one `npm run db:migrate`.
+
+```mermaid
+flowchart TD
+    CMD["npm run db:migrate"] --> RAW["node src/scripts/runMigrations.js"]
+    RAW --> CDB["CREATE DATABASE IF NOT EXISTS<br/>+ set default collation"]
+    CDB --> SCAN["read migrations/*.sql, sorted"]
+    SCAN --> STRIP["strip DELIMITER directives,<br/>normalise tokens to ;"]
+    STRIP --> RUN["execute on a bare mysql2<br/>connection (multipleStatements)"]
+    RUN --> NEXT["sequelize-cli db:migrate"]
+    NEXT --> M1["database/migrations/0001..0008"]
+    M1 --> OK["one schema, one connection layer"]
+
+    classDef raw fill:#fee,stroke:#a33
+    classDef seq fill:#efe,stroke:#474
+    class RAW,CDB,SCAN,STRIP,RUN raw
+    class NEXT,M1,OK seq
+```
+
+The raw runner opens its own connection only because it must `CREATE DATABASE`
+before a schema exists and needs `multipleStatements` for the SQL files. Every
+line the application executes afterwards goes through Sequelize.
+
+The four live tables as a full ER diagram — every column, key and constraint —
+is in [`PAYMENTS.md`](../../PAYMENTS.md) §12.3.
 
 ---
 
