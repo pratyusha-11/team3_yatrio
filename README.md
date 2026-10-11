@@ -452,6 +452,42 @@ The frontend communicates with the backend through the configured API endpoints.
 
 ---
 
+## ☁️ Deploying the frontend
+
+The frontend is a static Vite build, so any static host works. On **Cloudflare
+Pages**:
+
+| Setting | Value |
+| --- | --- |
+| Framework preset | Vite |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | `Frontend` |
+| Node version | 18 or newer |
+
+Two environment variables in the Pages dashboard:
+
+```text
+VITE_API_URL=https://your-backend-host      # origin only, no /api prefix
+VITE_USE_MOCK_DATA=false                     # once real endpoints exist
+```
+
+> **Why the root loads but every other link 404s.** The app uses
+> `createBrowserRouter`, so every route is client-side. A static host looks for
+> a file at each path and finds none, so it returns 404 — while `/` works,
+> which is what makes it look random. `Frontend/public/_redirects` fixes it by
+> handing any path that is not a real file back to `index.html`:
+>
+> ```
+> /*    /index.html   200
+> ```
+>
+> Vite copies `public/` into `dist/` unchanged, so this needs no
+> `vite.config.js` change. If you deploy somewhere else, the equivalent is
+> "rewrite all unmatched paths to `/index.html`".
+
+---
+
 ## 🧪 Development
 
 ### Frontend
