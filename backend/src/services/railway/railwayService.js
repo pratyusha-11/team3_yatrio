@@ -15,11 +15,14 @@ class RailwayService {
     const cached = await cache.get(cacheKey);
     if (cached) return cached;
 
-    let countQuery = 'SELECT COUNT(*) as total FROM stations WHERE status = "active"';
+    // Single-quoted literals, not "active". The hosted MySQL runs with
+    // ANSI_QUOTES, where double quotes delimit an identifier — the server
+    // reads "active" as a column name and rejects the query.
+    let countQuery = `SELECT COUNT(*) as total FROM stations WHERE status = 'active'`;
     let dataQuery = `
       SELECT id, station_code as code, station_name as name, city, state, timezone, status
       FROM stations
-      WHERE status = "active"
+      WHERE status = 'active'
     `;
     const params = [];
 

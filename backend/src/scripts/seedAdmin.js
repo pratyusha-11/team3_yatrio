@@ -1,6 +1,6 @@
 const path = require('path');
 const bcrypt = require('bcryptjs');
-const mysql = require('mysql2/promise');
+const db = require('../config/db');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 async function seedAdmin() {
@@ -8,23 +8,14 @@ async function seedAdmin() {
     console.log('  Seeding Local Development Admin User        ');
     console.log('==============================================');
 
-    let connection;
     try {
-        const dbName = process.env.DB_NAME || 'yatrio_db';
-        connection = await mysql.createConnection({
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || '',
-            port: process.env.DB_PORT || 3306,
-            database: dbName
-        });
-
+        // The shared Sequelize connection, same as the running server.
         const adminEmail = 'admin@yatrio.local';
         const adminPhone = '0000000000'; // Placeholder to satisfy UNIQUE constraint if needed
         const rawPassword = 'Admin@123';
-        
+
         // Check if admin already exists
-        const [existing] = await connection.query(
+        const [existing] = await db.query(
             'SELECT id, email FROM users WHERE email = ?',
             [adminEmail]
         );
@@ -40,8 +31,8 @@ async function seedAdmin() {
 
         // Insert the admin user
         console.log(`[INFO] Inserting admin into database...`);
-        const [result] = await connection.query(
-            `INSERT INTO users (full_name, email, phone, password, role, status) 
+        const [result] = await db.query(
+            `INSERT INTO users (full_name, email, phone, password, role, status)
              VALUES (?, ?, ?, ?, ?, ?)`,
             [
                 'System Administrator',
@@ -63,9 +54,7 @@ async function seedAdmin() {
         console.error('❌ Failed to seed admin user:', error);
         process.exit(1);
     } finally {
-        if (connection) {
-            await connection.end();
-        }
+        await db.end();
     }
 }
 

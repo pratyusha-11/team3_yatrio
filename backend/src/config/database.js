@@ -206,4 +206,13 @@ function describe() {
   }
 }
 
-module.exports = { sequelize, connection, connect, close, describe, runSqlScript, clientFlags }
+/**
+ * TLS options for any mysql2 client, including the raw migration runner.
+ *
+ * One place knows how to reach a database that needs TLS — exporting it keeps
+ * `src/scripts/runMigrations.js` from having to resolve the CA a second way,
+ * and stops the two from disagreeing about whether verification is on.
+ */
+const sslOptions = ssl === false ? undefined : ssl
+
+module.exports = { sequelize, connection, connect, close, describe, runSqlScript, clientFlags, sslOptions }

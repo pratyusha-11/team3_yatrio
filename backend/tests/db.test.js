@@ -102,11 +102,17 @@ async function run() {
       assert.ok(names.includes(expected), `missing procedure ${expected}`)
     }
 
+    // The database is shared by all seven teams, so assert that Team 5's
+    // triggers are present — not that these are the only ones in the schema.
+    // Teams 1, 2 and 7 have audit triggers of their own.
     const triggers = await rows(
       `SELECT TRIGGER_NAME AS name FROM information_schema.TRIGGERS
         WHERE TRIGGER_SCHEMA = DATABASE()`,
     )
-    assert.strictEqual(triggers.length, 2, `expected 2 triggers, found ${triggers.length}`)
+    const triggerNames = triggers.map((t) => t.name)
+    for (const expected of ['trg_payments_status_guard', 'trg_refunds_payment_guard']) {
+      assert.ok(triggerNames.includes(expected), `missing trigger ${expected}`)
+    }
 
     const views = await rows(
       `SELECT TABLE_NAME AS name FROM information_schema.VIEWS WHERE TABLE_SCHEMA = DATABASE()`,
