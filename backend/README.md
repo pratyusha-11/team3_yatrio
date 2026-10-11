@@ -1,15 +1,17 @@
 # Yatrio — Backend
 
-One Express server for all seven teams. The API is versioned under `/api/v1`,
+One Express server for all seven teams. The API is served from the root — there
+is no `/api` or `` prefix, and the frontend reads the base URL from
+`VITE_API_URL` (see [`../Frontend/.env.example`](../Frontend/.env.example)).
 and each team owns its own slice of `src/` and its own part of the schema.
 
 | Team | Module | Lives in | Base path |
 | --- | --- | --- | --- |
-| T1 | Auth & Users | `src/controllers/authController.js` | `/api/v1/auth`, `/api/v1/users` |
-| T2 | Railway Search | `src/controllers/stationController.js`, `trainController.js` | `/api/v1/stations`, `/api/v1/trains` |
-| T5 | Payment | `src/controllers/paymentController.js` | `/api/v1/payments` |
-| T7 | Admin & Analytics | `src/controllers/adminController.js`, `analyticsController.js`, `reportController.js`, `monitoringController.js` | `/api/v1/admin` |
-| all | Health | `src/server.js` | `/api/v1/health` |
+| T1 | Auth & Users | `src/controllers/authController.js` | `/auth`, `/users` |
+| T2 | Railway Search | `src/controllers/stationController.js`, `trainController.js` | `/stations`, `/trains` |
+| T5 | Payment | `src/controllers/paymentController.js` | `/payments` |
+| T7 | Admin & Analytics | `src/controllers/adminController.js`, `analyticsController.js`, `reportController.js`, `monitoringController.js` | `/admin` |
+| all | Health | `src/server.js` | `/health` |
 
 Teams 3, 4 and 6 have not landed their API work yet. The payment module depends
 on Team 4's booking service; until it exists, `src/services/payment/bookingService.js`
@@ -25,12 +27,12 @@ flowchart TD
     LOG --> LIMIT["apiLimiter<br/>express-rate-limit + Redis"]
     LIMIT --> MOUNT{"mounted path"}
 
-    MOUNT -->|"/api/v1/auth"| AUTHM["authLimiter<br/>then authRoutes"]
-    MOUNT -->|"/api/v1/users"| USER["userRoutes"]
-    MOUNT -->|"/api/v1/admin"| GUARD["authMiddleware<br/>adminMiddleware"]
-    MOUNT -->|"/api/v1/stations<br/>/api/v1/trains"| SEARCH["stationRoutes<br/>trainRoutes"]
-    MOUNT -->|"/api/v1/payments"| PAY["paymentRoutes"]
-    MOUNT -->|"/api/v1/health"| HEALTH["health"]
+    MOUNT -->|"/auth"| AUTHM["authLimiter<br/>then authRoutes"]
+    MOUNT -->|"/users"| USER["userRoutes"]
+    MOUNT -->|"/admin"| GUARD["authMiddleware<br/>adminMiddleware"]
+    MOUNT -->|"/stations<br/>/trains"| SEARCH["stationRoutes<br/>trainRoutes"]
+    MOUNT -->|"/payments"| PAY["paymentRoutes"]
+    MOUNT -->|"/health"| HEALTH["health"]
 
     AUTHM & USER & GUARD & SEARCH & PAY & HEALTH --> ROUTE["controller"]
     ROUTE --> DBQ["db.query — Sequelize"]
@@ -98,7 +100,7 @@ npm start          # or: npm run dev  (nodemon)
 ```
 
 ```bash
-GET http://localhost:5000/api/v1/health
+GET http://localhost:5000/health
 ```
 
 Copy `.env.example` to `.env` and fill it in. It needs `DB_*` for the database,
@@ -196,7 +198,7 @@ backend/
 │   │   ├── env.js             # env loading and validation
 │   │   └── redis.js
 │   ├── controllers/           # one per team module
-│   ├── routes/                # <name>Routes.js, mounted under /api/v1
+│   ├── routes/                # <name>Routes.js, mounted under 
 │   ├── middleware/            # auth, admin, rate limiting, request logging
 │   ├── models/                # Team 5 Sequelize models
 │   ├── services/

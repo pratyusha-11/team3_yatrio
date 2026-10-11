@@ -21,28 +21,30 @@ app.use(cors());
 app.use(express.json());
 
 app.use(requestLogger);
-app.use('/api/', apiLimiter);
+
+// The API is served from the root — no /api or /api/v1 prefix. The frontend
+// reads the base URL from VITE_API_URL and appends only the resource path.
+// This widens the limiter to every route including /health and the banner at
+// '/'; scope it per-router instead if that is ever a problem.
+app.use('/', apiLimiter);
 
 // Auth & User routes
-app.use('/api/v1/auth', authLimiter, authRoutes);
-app.use('/api/v1/users', userRoutes);
+app.use('/auth', authLimiter, authRoutes);
+app.use('/users', userRoutes);
 
 // Team 7 - Admin Routes
-app.use('/api/v1/admin', authMiddleware, adminMiddleware, adminRoutes);
+app.use('/admin', authMiddleware, adminMiddleware, adminRoutes);
 
 // Team 2 - Railway Search & Station Discovery routes
-app.use('/api/v1/stations', stationRoutes);
 app.use('/stations', stationRoutes);
-
-app.use('/api/v1/trains', trainRoutes);
 app.use('/trains', trainRoutes);
 
 // Team 5 - Payment & Transactions
-app.use('/api/v1/payments', paymentRoutes);
+app.use('/payments', paymentRoutes);
 
 // Service health. Reports whether the database is reachable and whether
 // payment is configured, without revealing credentials.
-app.get('/api/v1/health', async (req, res) => {
+app.get('/health', async (req, res) => {
   const health = {
     status: 'ok',
     razorpay: env.isMockRazorpay ? 'unconfigured' : 'configured',
@@ -71,11 +73,11 @@ app.get('/', (req, res) => {
       'GET /trains/:trainNo',
     ],
     team5Endpoints: [
-      'POST /api/v1/payments/create-order',
-      'POST /api/v1/payments/verify',
-      'POST /api/v1/payments/refund',
-      'GET /api/v1/payments/status/:orderId',
-      'GET /api/v1/payments/history',
+      'POST /payments/create-order',
+      'POST /payments/verify',
+      'POST /payments/refund',
+      'GET /payments/status/:orderId',
+      'GET /payments/history',
     ],
   });
 });
