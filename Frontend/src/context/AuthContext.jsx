@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, } from "react";
 import authFetch from "../utils/authFetch";
-const API_URL = "http://localhost:5000/api/v1/auth";
-const PROFILE_URL = "http://localhost:5000/api/v1/users/profile";
+import { API_BASE_URL } from "@/api/client";
+const API_URL = `${API_BASE_URL}/auth`;
+const PROFILE_URL = `${API_BASE_URL}/users/profile`;
 const AuthContext = createContext(undefined);
 export function AuthProvider({ children, }) {
     const [user, setUser] = useState(null);

@@ -505,7 +505,7 @@ The project can be extended with:
 | Component | Status |
 | --- | --- |
 | Frontend | ✅ Completed — passenger, admin and payment screens |
-| Backend | ✅ Completed — one Express API, four modules mounted under `/api/v1` |
+| Backend | ✅ Completed — one Express API, four modules mounted at the root |
 | Database | ✅ 15 tables, 5 views, 12 stored procedures, 11 triggers — one MySQL schema |
 | API Integration | 🚧 Teams 3, 4 and 6 have not landed their endpoints yet |
 | Authentication | ✅ Register, login, JWT and role middleware |
@@ -545,7 +545,7 @@ Team 7 implements the administrative observation, reporting, and system control 
 - `/admin/audit-logs` - Security event timeline
 
 ### Backend Routes (Express)
-Mounted under `/api/v1/admin/`:
+Mounted under `/admin/`:
 - `GET /dashboard`, `GET /users`, `GET /trains`, `GET /bookings`, `GET /payments`, `GET /cancellations`, `GET /audit-logs`, `GET /reports`, `GET /analytics`, `GET /monitoring`, `GET /monitoring/api`, `GET /monitoring/pnr`
 
 ### Database Objects (MySQL)

@@ -4,11 +4,11 @@
  * Payment controller — Team 5.
  *
  * Contract (from the team assignment):
- *   POST /api/v1/payments/create-order
- *   POST /api/v1/payments/verify
- *   POST /api/v1/payments/refund
- *   GET  /api/v1/payments/history
- *   GET  /api/v1/payments/status/:orderId
+ *   POST /payments/create-order
+ *   POST /payments/verify
+ *   POST /payments/refund
+ *   GET  /payments/history
+ *   GET  /payments/status/:orderId
  *
  * Two invariants this file exists to protect:
  *   1. The amount is always computed server-side from the booking record.
@@ -49,7 +49,7 @@ const serialise = (r) => ({
 })
 
 /**
- * POST /api/v1/payments/create-order
+ * POST /payments/create-order
  *
  * Body: { bookingRef, extras?: { insurance?, coupon? } }
  * A retry of the same booking mints a NEW order — Razorpay orders are
@@ -135,7 +135,7 @@ async function createOrder(req, res) {
 }
 
 /**
- * POST /api/v1/payments/verify
+ * POST /payments/verify
  *
  * Body: { orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature }
  *
@@ -216,7 +216,7 @@ async function verifyPayment(req, res) {
 }
 
 /**
- * GET /api/v1/payments/status/:orderId
+ * GET /payments/status/:orderId
  * Polled by the pending screen. Reconciles with Razorpay so a payment that
  * settled out of band still resolves.
  */
@@ -259,7 +259,7 @@ async function getStatus(req, res) {
 }
 
 /**
- * GET /api/v1/payments/history?status=all|captured|pending|failed|refunded&page=1&pageSize=10
+ * GET /payments/history?status=all|captured|pending|failed|refunded&page=1&pageSize=10
  */
 async function getHistory(req, res) {
   const { status = 'all', page = 1, pageSize = 10 } = req.query
@@ -277,7 +277,7 @@ async function getHistory(req, res) {
 }
 
 /**
- * POST /api/v1/payments/refund
+ * POST /payments/refund
  *
  * Body: { orderId } or { paymentId, amount? }
  * Refunds are terminal — a second refund on the same payment is refused.
