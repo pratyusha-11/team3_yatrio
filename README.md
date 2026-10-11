@@ -452,6 +452,69 @@ The frontend communicates with the backend through the configured API endpoints.
 
 ---
 
+## ☁️ Deploying the frontend
+
+The frontend is a static Vite build deployed as a **Cloudflare Worker**
+(assets-only — no Worker script). `Frontend/wrangler.jsonc` holds all the
+config:
+
+```jsonc
+{
+	"name": "yatrio",
+	"compatibility_date": "2026-10-11",
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "single-page-application"
+	}
+}
+```
+
+Build settings in the Cloudflare dashboard:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `Frontend` |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Node version | 18 or newer |
+
+> `"name"` must match the Worker's name on the dashboard (`yatrio`) exactly, or
+> `wrangler deploy` aborts.
+
+> **Keep `wrangler.jsonc`.** Without it, wrangler 4.68+ falls back to
+> *auto-config*, which parses `vite.config.js` and fails with
+> `Error parsing file: .../vite.config.js`. Any config file disables it.
+
+### Environment variables
+
+Set these in the Cloudflare dashboard under build environment variables:
+
+```text
+VITE_API_URL=https://your-backend-host      # origin only, no /api prefix
+VITE_USE_MOCK_DATA=false                     # once real endpoints exist
+```
+
+Vite inlines `VITE_*` variables **at build time**, so these must be set before
+the build runs — changing them afterwards has no effect until a rebuild.
+
+> **Why the root loads but every other link 404s.** The app uses
+> `createBrowserRouter`, so every route is client-side. A static host looks for
+> a file at each path and finds none, so it returns 404 — while `/` works,
+> which is what makes it look random. `assets.not_found_handling` fixes it by
+> serving `/index.html` for any request that matches no asset.
+>
+> If you ever deploy the frontend somewhere else, the equivalent is "rewrite
+> all unmatched paths to `/index.html`". On Cloudflare **Pages** that is the
+> `public/_redirects` file syntax, which is why it is not used here.
+
+### Deploying the backend
+
+The backend is a Node/Express app, not yet deployed. It cannot run on
+Cloudflare Workers without a compatibility flag and some adaptation — treat
+that as separate work, and set `VITE_API_URL` once it has a public URL.
+
+---
+
 ## 🧪 Development
 
 ### Frontend
@@ -505,7 +568,7 @@ The project can be extended with:
 | Component | Status |
 | --- | --- |
 | Frontend | ✅ Completed — passenger, admin and payment screens |
-| Backend | ✅ Completed — one Express API, four modules mounted under `/api/v1` |
+| Backend | ✅ Completed — one Express API, four modules mounted at the root |
 | Database | ✅ 15 tables, 5 views, 12 stored procedures, 11 triggers — one MySQL schema |
 | API Integration | 🚧 Teams 3, 4 and 6 have not landed their endpoints yet |
 | Authentication | ✅ Register, login, JWT and role middleware |
@@ -545,7 +608,7 @@ Team 7 implements the administrative observation, reporting, and system control 
 - `/admin/audit-logs` - Security event timeline
 
 ### Backend Routes (Express)
-Mounted under `/api/v1/admin/`:
+Mounted under `/admin/`:
 - `GET /dashboard`, `GET /users`, `GET /trains`, `GET /bookings`, `GET /payments`, `GET /cancellations`, `GET /audit-logs`, `GET /reports`, `GET /analytics`, `GET /monitoring`, `GET /monitoring/api`, `GET /monitoring/pnr`
 
 ### Database Objects (MySQL)

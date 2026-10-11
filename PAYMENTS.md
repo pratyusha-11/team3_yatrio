@@ -18,10 +18,9 @@ it, and a settled payment hands back to the booking record.
 
 | Variable | File | Public? | Required | Notes |
 |---|---|---|---|---|
-| `VITE_API_MODE` | `Frontend/.env` | yes | no | `mock` runs the whole stage with no backend; `live` calls the API |
-| `VITE_API_BASE_URL` | `Frontend/.env` | yes | live | default `http://localhost:5000/api` |
-| `VITE_RAZORPAY_KEY_ID` | `Frontend/.env` | **yes — by design** | live | Razorpay's Checkout modal requires it in the browser |
-| `VITE_MOCK_OUTCOME` | `Frontend/.env` | yes | no | `success` / `failure` / `pending`, mock mode only |
+| `VITE_API_URL` | `Frontend/.env` | yes | yes | API **origin only**, no path prefix: `http://localhost:5000`. There is no dev proxy, so this one value works in dev and in production |
+| `VITE_USE_MOCK_DATA` | `Frontend/.env` | yes | no | `true` (default) — the services serve bundled demo data; their live branch is not implemented yet |
+| `VITE_RAZORPAY_KEY_ID` | `Frontend/.env` | **yes — by design** | live | Razorpay's Checkout modal requires it in the browser. Not read yet: the payment frontend has not been merged |
 | `PORT` | `backend/.env` | no | no | default `5000` |
 | `RAZORPAY_KEY_ID` | `backend/.env` | no | **yes** | must be the **same key pair** as the frontend's, or checkout fails |
 | `RAZORPAY_KEY_SECRET` | `backend/.env` | **never** | **yes** | HMAC verification only. Never in any `VITE_` variable |
@@ -52,7 +51,7 @@ sequenceDiagram
     autonumber
     actor T as Traveller
     participant FE as Frontend<br/>/booking/:id/payment
-    participant BE as Backend<br/>/api/v1/payments
+    participant BE as Backend<br/>/payments
     participant B as bookingService<br/>(Team 4)
     participant F as fareService
     participant S as paymentStore
@@ -159,10 +158,10 @@ note in §8.
 
 ## 4. API contract
 
-Base URL: `/api/v1/payments`. All amounts are **paise** — Razorpay's smallest
+Base URL: `/payments`. All amounts are **paise** — Razorpay's smallest
 currency unit. Errors share one envelope.
 
-### `POST /api/v1/payments/create-order`
+### `POST /payments/create-order`
 
 Mints a Razorpay order for a booking. **No amount in the body** — the server
 resolves the booking and computes the fare.
@@ -198,7 +197,7 @@ resolves the booking and computes the fare.
 | `409` | `MAX_ATTEMPTS` | more than `MAX_PAYMENT_ATTEMPTS` attempts |
 | `200` | — | a live order was reused (`reused: true`) |
 
-### `POST /api/v1/payments/verify`
+### `POST /payments/verify`
 
 Server-side HMAC verification, then confirmation against Razorpay. Idempotent.
 
@@ -223,14 +222,14 @@ Server-side HMAC verification, then confirmation against Razorpay. Idempotent.
 | `409` | `REFUNDED` | already refunded |
 | `502` | `GATEWAY_ERROR` | Razorpay unreachable |
 
-### `GET /api/v1/payments/status/:orderId`
+### `GET /payments/status/:orderId`
 
 Poll target for the pending screen. Reconciles with Razorpay and expires stale
 orders.
 
 **Response `200`** — the payment record. `404` when unknown.
 
-### `POST /api/v1/payments/refund`
+### `POST /payments/refund`
 
 Terminal. Refunds a captured payment at Razorpay.
 
@@ -247,7 +246,7 @@ Omit `amount` for a full refund.
 | `409` | `NOT_CAPTURED` | the payment is not `captured` |
 | `409` | `ALREADY_REFUNDED` | **second refund — refused** |
 
-### `GET /api/v1/payments/history`
+### `GET /payments/history`
 
 `?status=all|captured|pending|failed|refunded&page=1&pageSize=10`
 
@@ -504,7 +503,7 @@ refunded ───────────────────────�
 
 ### Endpoints Team 5 exposes to Team 4
 
-`GET /api/v1/payments/status/:orderId` — poll a booking's payment state.
+`GET /payments/status/:orderId` — poll a booking's payment state.
 
 ### Known dependency
 
