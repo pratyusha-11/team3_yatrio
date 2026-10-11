@@ -8,7 +8,6 @@
 
 <br>
 
-![Architecture](https://img.shields.io/badge/architecture-full-stack-014CA9?style=for-the-badge&labelColor=04275B&logoColor=white)
 ![React](https://img.shields.io/badge/React%20%2B%20Vite-Frontend-0080F8?style=for-the-badge&labelColor=04275B)
 ![Node.js](https://img.shields.io/badge/Node.js%20%2B%20Express-Backend-3BB3FD?style=for-the-badge&labelColor=04275B)
 ![MySQL](https://img.shields.io/badge/MySQL%208.4-Database-4479A1?style=for-the-badge&labelColor=04275B)
