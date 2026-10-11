@@ -1,19 +1,36 @@
-# RailSetu
+<div align="center">
 
-**Railway Ticket Booking and Management System**
+<img src="https://github.com/user-attachments/assets/118e4e95-2546-44cb-9594-65fcb67cc968" alt="Yatrio logo" width="100%">
 
-> Repository: [`8DMuscian/Yatrio`](https://github.com/8DMuscian/Yatrio) ·
-> clone it as `Yatrio`, the product is called **RailSetu**.
+### Move Beyond Limits
 
-RailSetu is a railway reservation and management system: passengers search for
-trains, book a seat and pay through Razorpay, while administrators manage the
-network and watch the numbers.
+*A railway booking platform — live train search, PNR status, live tracking, and a full booking flow with Razorpay test payments.*
+
+<br>
+
+![Architecture](https://img.shields.io/badge/architecture-full-stack-014CA9?style=for-the-badge&labelColor=04275B&logoColor=white)
+![React](https://img.shields.io/badge/React%20%2B%20Vite-Frontend-0080F8?style=for-the-badge&labelColor=04275B)
+![Node.js](https://img.shields.io/badge/Node.js%20%2B%20Express-Backend-3BB3FD?style=for-the-badge&labelColor=04275B)
+![MySQL](https://img.shields.io/badge/MySQL%208.4-Database-4479A1?style=for-the-badge&labelColor=04275B)
+![Payments](https://img.shields.io/badge/Razorpay-Test%20Mode-0080F8?style=for-the-badge&labelColor=04275B)
+![Status](https://img.shields.io/badge/Scope-MVP%20Demo-3BB3FD?style=for-the-badge&labelColor=04275B)
+
+<br>
+
+**[Overview](#-project-overview) · [Features](#-features) · [Tech Stack](#-tech-stack) · [Structure](#-project-structure) · [Run](#-how-to-run-the-project) · [Env](#-environment-variables) · [Status](#-project-status)**
+
+</div>
+
+<br>
 
 ## 🚆 Project Overview
 
-RailSetu is a railway reservation and management system: passengers search for
+Yatrio is a railway reservation and management system: passengers search for
 trains, book a seat and pay through Razorpay, while administrators manage the
 network and watch the numbers.
+
+> Payments run in **Razorpay TEST MODE**, and every booking, PNR and ticket is a
+> **demo artifact** — no real IRCTC ticket booking is performed.
 
 The frontend is React + Vite, the backend is a single Express API serving every
 team, and all seven teams share one MySQL schema.
@@ -216,7 +233,7 @@ erDiagram
 ## 📁 Project Structure
 
 ```text
-RailSetu/
+Yatrio/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
@@ -263,7 +280,7 @@ RailSetu/
 
 ---
 
-# ▶️ How to Run the Project
+## ▶️ How to Run the Project
 
 ## 1. Clone the Repository
 
@@ -311,7 +328,7 @@ cd ..
 
 ---
 
-# 🔐 Environment Variables
+## 🔐 Environment Variables
 
 The backend reads everything from `backend/.env`. Copy the template and fill it
 in:
@@ -356,7 +373,7 @@ Full list: [`backend/.env.example`](backend/.env.example).
 
 ---
 
-# 🚀 Start the Application
+## 🚀 Start the Application
 
 The frontend and backend should be run in **two separate terminals**.
 
@@ -403,7 +420,7 @@ Open that URL in your browser.
 
 ---
 
-# 🔄 Running Both Servers
+## 🔄 Running Both Servers
 
 You need both servers running at the same time:
 
@@ -436,7 +453,7 @@ The frontend communicates with the backend through the configured API endpoints.
 
 ---
 
-# 🧪 Development
+## 🧪 Development
 
 ### Frontend
 
@@ -465,7 +482,7 @@ npm run preview
 
 ---
 
-# 🔮 Future Development
+## 🔮 Future Development
 
 The project can be extended with:
 
@@ -484,7 +501,7 @@ The project can be extended with:
 
 ---
 
-# 📌 Project Status
+## 📌 Project Status
 
 | Component | Status |
 | --- | --- |
@@ -496,7 +513,7 @@ The project can be extended with:
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
 **Kharade Prathamesh Bajarang** — [8DMuscian](https://github.com/8DMuscian)
 
