@@ -24,6 +24,7 @@ import { BookingDetails } from '@/pages/passenger/BookingDetails';
 import { PnrStatus } from '@/pages/passenger/PnrStatus';
 import { Profile } from '@/pages/passenger/Profile';
 // Admin Pages
+import AdminLogin from '@/pages/admin/AdminLogin';
 import Dashboard from '@/pages/admin/Dashboard';
 import TrainManagement from '@/pages/admin/TrainManagement';
 import CreateTrain from '@/pages/admin/CreateTrain';
@@ -35,6 +36,11 @@ import UserManagement from '@/pages/admin/UserManagement';
 import FareManagement from '@/pages/admin/FareManagement';
 import Reports from '@/pages/admin/Reports';
 import AuditLogs from '@/pages/admin/AuditLogs';
+import PaymentsManagement from '@/pages/admin/PaymentsManagement';
+import CancellationsManagement from '@/pages/admin/CancellationsManagement';
+import Analytics from '@/pages/admin/Analytics';
+import Monitoring from '@/pages/admin/Monitoring';
+
 export const router = createBrowserRouter([
     // ==========================================
     // PUBLIC ROUTES
@@ -49,6 +55,10 @@ export const router = createBrowserRouter([
             {
                 path: '/login',
                 element: <Login />,
+            },
+            {
+                path: '/admin/login',
+                element: <AdminLogin />,
             },
             {
                 path: '/register',
@@ -177,6 +187,22 @@ export const router = createBrowserRouter([
                     {
                         path: '/admin/audit-logs',
                         element: <AuditLogs />,
+                    },
+                    {
+                        path: '/admin/payments',
+                        element: <PaymentsManagement />,
+                    },
+                    {
+                        path: '/admin/cancellations',
+                        element: <CancellationsManagement />,
+                    },
+                    {
+                        path: '/admin/analytics',
+                        element: <Analytics />,
+                    },
+                    {
+                        path: '/admin/monitoring',
+                        element: <Monitoring />,
                     },
                 ],
             },

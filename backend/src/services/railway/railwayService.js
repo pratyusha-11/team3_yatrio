@@ -12,7 +12,7 @@ class RailwayService {
     const offset = (pageNum - 1) * limitNum;
 
     const cacheKey = `stations:all:${pageNum}:${limitNum}:${search}`;
-    const cached = cache.get(cacheKey);
+    const cached = await cache.get(cacheKey);
     if (cached) return cached;
 
     let countQuery = 'SELECT COUNT(*) as total FROM stations WHERE status = "active"';
@@ -47,7 +47,7 @@ class RailwayService {
       },
     };
 
-    cache.set(cacheKey, result, 120); // 2 minutes cache
+    await cache.set(cacheKey, result, 120); // 2 minutes cache
     return result;
   }
 
@@ -59,7 +59,7 @@ class RailwayService {
     const limitNum = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
 
     const cacheKey = `stations:search:${cleanQuery}:${limitNum}`;
-    const cached = cache.get(cacheKey);
+    const cached = await cache.get(cacheKey);
     if (cached) return cached;
 
     // Call stored procedure
@@ -78,7 +78,7 @@ class RailwayService {
       status: s.status,
     }));
 
-    cache.set(cacheKey, stations, 180); // 3 minutes cache
+    await cache.set(cacheKey, stations, 180); // 3 minutes cache
     return stations;
   }
 
@@ -90,7 +90,7 @@ class RailwayService {
     const normalizedTo = toCode.trim().toUpperCase();
 
     const cacheKey = `trains:between:${normalizedFrom}:${normalizedTo}:${journeyDate}`;
-    const cached = cache.get(cacheKey);
+    const cached = await cache.get(cacheKey);
     if (cached) return cached;
 
     // Call stored procedure search_trains_between_stations
@@ -160,7 +160,7 @@ class RailwayService {
       trains,
     };
 
-    cache.set(cacheKey, responseData, 60); // 1 minute cache
+    await cache.set(cacheKey, responseData, 60); // 1 minute cache
     return responseData;
   }
 
@@ -216,7 +216,7 @@ class RailwayService {
   async getTrainDetails(trainNo) {
     const cleanTrainNo = String(trainNo).trim();
     const cacheKey = `train:details:${cleanTrainNo}`;
-    const cached = cache.get(cacheKey);
+    const cached = await cache.get(cacheKey);
     if (cached) return cached;
 
     // 1. Fetch train basic info
@@ -309,7 +309,7 @@ class RailwayService {
       })),
     };
 
-    cache.set(cacheKey, result, 300); // 5 minutes cache
+    await cache.set(cacheKey, result, 300); // 5 minutes cache
     return result;
   }
 }
