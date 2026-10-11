@@ -1,0 +1,21 @@
+'use strict'
+
+/**
+ * sequelize-cli defaults. Loaded with require(), so this is JS rather than JSON.
+ *
+ * Team 5's migrations and seeders live in database/ and are driven by
+ * sequelize-cli. The other teams apply raw SQL from migrations/ via
+ * src/scripts/runMigrations.js instead — the two systems never touch the same
+ * folder.
+ *
+ * Credentials come from src/config/config.js, which reads the same env as the
+ * running server, so migrations and the app cannot drift onto different
+ * databases.
+ */
+
+module.exports = {
+  config: './src/config/config.js',
+  'migrations-path': './database/migrations',
+  'seeders-path': './database/seeders',
+  'models-path': './src/models',
+}
