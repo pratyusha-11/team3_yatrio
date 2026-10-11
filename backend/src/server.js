@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const requestLogger = require('./middleware/requestLoggerMiddleware');
+const { apiLimiter, authLimiter } = require('./middleware/rateLimitMiddleware');
 require('dotenv').config();
 
 const pool = require('./config/db');
@@ -7,15 +9,24 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const stationRoutes = require('./routes/stationRoutes');
 const trainRoutes = require('./routes/trainRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const adminMiddleware = require('./middleware/adminMiddleware');
+const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.use(requestLogger);
+app.use('/api/', apiLimiter);
+
 // Auth & User routes
-app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/auth', authLimiter, authRoutes);
 app.use('/api/v1/users', userRoutes);
+
+// Team 7 - Admin Routes
+app.use('/api/v1/admin', authMiddleware, adminMiddleware, adminRoutes);
 
 // Team 2 - Railway Search & Station Discovery routes
 app.use('/api/v1/stations', stationRoutes);

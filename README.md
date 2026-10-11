@@ -331,3 +331,44 @@ The project can be extended with:
 ## 📄 License
 
 This project is developed for educational and development purposes.
+
+---
+
+## Team 7: Admin, Analytics & System Infrastructure
+
+### Scope
+Team 7 implements the administrative observation, reporting, and system control layer. This includes the internal React admin shell, authentication guards, dynamic dashboard charting, and deep backend integrations for operational visibility.
+
+### Frontend Routes (React)
+- `/admin/login` - Premium Yatrio administrative authentication
+- `/admin` - Operational dashboard overview
+- `/admin/users` - Passenger and admin management
+- `/admin/trains` - Fleet read-only observation
+- `/admin/bookings`, `/admin/payments`, `/admin/cancellations` - Transactional interfaces
+- `/admin/monitoring` - Real-time system telemetry and API health logs
+- `/admin/reports` - Dynamic datasets with CSV export capabilities
+- `/admin/analytics` - Visual charting workspaces
+- `/admin/audit-logs` - Security event timeline
+
+### Backend Routes (Express)
+Mounted under `/api/v1/admin/`:
+- `GET /dashboard`, `GET /users`, `GET /trains`, `GET /bookings`, `GET /payments`, `GET /cancellations`, `GET /audit-logs`, `GET /reports`, `GET /analytics`, `GET /monitoring`, `GET /monitoring/api`, `GET /monitoring/pnr`
+
+### Database Objects (MySQL)
+- **Tables**: `audit_logs`, `api_request_logs`
+- **Views**: `vw_booking_summary`, `vw_revenue_summary`, `vw_train_occupancy`, `vw_user_activity`
+- **Procedures**: `get_dashboard_statistics()`, `get_daily_revenue()`, `get_popular_routes()`, `get_train_occupancy()`
+- **Indexes**: Includes composite `idx_users_role_status` and timestamp filters for telemetry tables.
+
+### Caching & Telemetry (Redis)
+Team 7 utilizes `ioredis` strictly connected to `127.0.0.1:6379`. It provides:
+- Automatic short-TTL caching for heavy dashboard KPI queries.
+- Health telemetry tracking inside `/admin/monitoring`.
+- API request rate limiting.
+
+### Demo Limitations & Cross-Team Integrations
+Team 7 respects strict cross-team domain boundaries. Specifically, **Team 4 (Bookings)**, **Team 5 (Payments)**, and **Team 6 (PNR Live)** schemas are currently pending migration integrations.
+
+**Until these tables become active:**
+- The frontend displays honest `"Integration Pending"` empty states for booking and payment management pages.
+- The dashboard and analytics engine will dynamically estimate `"proxy revenue"` and booking volume snapshots strictly via the `train_classes.available_seats` metric. No transactional fields are fabricated. As soon as the respective teams' schemas are integrated into the MySQL DB, these admin interfaces will instantly consume the live data.

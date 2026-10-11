@@ -1,42 +1,58 @@
 /**
- * Simple in-memory TTL cache for Team 2 Railway service
+ * Redis-backed Cache Service for shared infrastructure (Team 7)
+ * Made backward-compatible with the original interface for Team 2
  */
+const { redis } = require('../../config/redis');
+
 class CacheService {
   constructor(defaultTtlSeconds = 300) {
-    this.cache = new Map();
-    this.defaultTtl = (parseInt(process.env.CACHE_TTL_SECONDS, 10) || defaultTtlSeconds) * 1000;
+    this.defaultTtl = parseInt(process.env.CACHE_TTL_SECONDS, 10) || defaultTtlSeconds;
   }
 
-  get(key) {
-    const item = this.cache.get(key);
-    if (!item) return null;
-
-    if (Date.now() > item.expiry) {
-      this.cache.delete(key);
+  async get(key) {
+    try {
+      const data = await redis.get(key);
+      if (!data) return null;
+      return JSON.parse(data);
+    } catch (err) {
+      console.error(`Cache get error for key ${key}:`, err);
       return null;
     }
-
-    return item.value;
   }
 
-  set(key, value, ttlSeconds) {
-    const ttl = ttlSeconds ? ttlSeconds * 1000 : this.defaultTtl;
-    this.cache.set(key, {
-      value,
-      expiry: Date.now() + ttl,
-    });
+  async set(key, value, ttlSeconds) {
+    try {
+      const ttl = ttlSeconds ? ttlSeconds : this.defaultTtl;
+      const data = JSON.stringify(value);
+      await redis.set(key, data, 'EX', ttl);
+    } catch (err) {
+      console.error(`Cache set error for key ${key}:`, err);
+    }
   }
 
-  del(key) {
-    this.cache.delete(key);
+  async del(key) {
+    try {
+      await redis.del(key);
+    } catch (err) {
+      console.error(`Cache del error for key ${key}:`, err);
+    }
   }
 
-  flush() {
-    this.cache.clear();
+  async flush() {
+    try {
+      await redis.flushdb();
+    } catch (err) {
+      console.error('Cache flush error:', err);
+    }
   }
 
-  size() {
-    return this.cache.size;
+  async size() {
+    try {
+      return await redis.dbsize();
+    } catch (err) {
+      console.error('Cache size error:', err);
+      return 0;
+    }
   }
 }
 
